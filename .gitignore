@@ -1,0 +1,10 @@
+# build output (GitHub Actions builds it fresh)
+dist/
+# local test screenshots
+test/shots/
+# local settings: your course server URL lives here when you build on your own computer
+config.json
+__pycache__/
+node_modules/
+.DS_Store
+*.zip
