@@ -1,0 +1,27 @@
+# Runs every check on each push and pull request. A red X on GitHub means: do not deploy yet.
+name: CI
+on:
+  push:
+    branches-ignore: [main]   # main is tested by the deploy workflow before it publishes
+  pull_request:
+  workflow_call:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - uses: actions/setup-node@v4
+        with: { node-version: "20" }
+      - name: Install Playwright (headless Chromium)
+        run: |
+          pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Run all checks
+        run: bash test/run_all.sh
+      - name: Keep screenshots if something failed
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with: { name: screenshots, path: test/shots, retention-days: 7 }
