@@ -8,6 +8,9 @@ COURSE.push({id:"u3", title:"Unit 3: IoT set-up tracks", sub:"Five ways to send 
   intro:"Every IoT system has the same five parts: a sensor, a connection, a place to store data, a way to look at it, and sometimes an action back. This module teaches the connection ideas that all five tracks share and helps you choose the track that fits your project.",
   objectives:["Describe the five parts of an IoT system and where each track puts them.","Explain Wi-Fi, HTTP requests, status codes, JSON, and MQTT in plain words.","Connect a board to Wi-Fi and recover from a dropped connection.","Keep secrets out of code you share.","Choose a track using cost, skills, limits, and the data you need."],
   sections:[
+   {id:"words", title:"Read this first: the new words in plain English", keys:"glossary router ip server client url api json key broker library beginner words", html:`
+    <p class="plain"><b>In plain words</b>Unit 3 is about getting your board's numbers out of the classroom and into the cloud. That sounds technical, but the idea is small: <b>computers send each other short written notes</b>. Your board writes a note (“here is today's temperature”) and a faraway computer called a <b>server</b> writes back (“got it”). Everything in this unit (HTTP, JSON, MQTT, keys) is just rules for how those notes are written and delivered. Flip the cards below first; they are the dictionary for the rest of the unit.</p>
+    <div class="casebox"><b>Follow one reading from start to finish</b>1) The DHT sensor measures 29.4 °C. 2) Your sketch writes it into a short note: <code>{"temp_c":29.4}</code>. 3) The board hands the note to the <b>router</b> over Wi-Fi. 4) The note travels across the <b>internet</b> to a <b>server</b> (Google, Firebase, AWS…). 5) The server checks your <b>key</b>, stores the reading, and answers <b>200 OK</b>. 6) Later, a Python notebook asks the server for the stored readings and draws a chart. Six small steps: that is the entire unit.</div>`, interactive:"jargonCards"},
    {id:"parts", title:"Five parts of every IoT system", keys:"iot architecture sense connect store analyze act", html:`
     <p>${ct("alfuqaha")} describe IoT as layers: things that sense and act, networks that carry the data, services that store and process it, and applications that people use. In this course:</p>
     <table class="t"><tr><th>Part</th><th>What it does</th><th>Your choices</th></tr>
@@ -17,14 +20,57 @@ COURSE.push({id:"u3", title:"Unit 3: IoT set-up tracks", sub:"Five ways to send 
      <tr><td><b>Analyze / show</b></td><td>Charts, statistics, alerts, models</td><td>Colab (Python) and your own web app</td></tr></table>
     ${srcs(["alfuqaha"])}`, interactive:"iotflow"},
    {id:"http", title:"HTTP, status codes, and JSON", keys:"http get post status code json request response", html:`
+    <p class="plain"><b>In plain words</b>Picture a restaurant. You (the <b>board</b>) write an <b>order</b> and give it to a waiter (the <b>internet</b>). The kitchen (the <b>server</b>) checks it, cooks (stores or fetches data) and sends back a <b>reply</b> on a slip. Every reply starts with a <b>traffic-light number</b> called a status code: 2xx means “done”, 4xx means “your order has a problem”, 5xx means “the kitchen has a problem”. Watch the story, then try the games.</p>
     <p>Most cloud tracks use <b>HTTPS</b>: your board sends a <b>request</b> (a method such as GET or POST, a URL, optional headers, and optional body) and receives a <b>response</b> with a <b>status code</b>. Learn these codes; they tell you what to fix:</p>
     <table class="t"><tr><th>Code</th><th>Meaning</th><th>Usual fix</th></tr><tr><td>200 / 201</td><td>OK / created</td><td>Nothing: it worked</td></tr><tr><td>302</td><td>Redirect (Apps Script does this)</td><td>Follow the Location header</td></tr><tr><td>400</td><td>Bad request (often broken JSON)</td><td>Print the body you send</td></tr><tr><td>401 / 403</td><td>Not signed in / not allowed</td><td>Check the key, token, or rules</td></tr><tr><td>404</td><td>Wrong URL</td><td>Copy the URL again</td></tr><tr><td>429</td><td>Too many requests</td><td>Send less often</td></tr></table>
-    <p><b>JSON</b> is text that stores named values: <code>{"device_id":"team1","temp_c":29.4}</code>. Braces make an object, quotes wrap names and text, numbers have no quotes, and commas separate items.</p>`, interactive:["packetJourney","statusGame","jsonBuilder"]},
+    <p><b>JSON</b> is text that stores named values: <code>{"device_id":"team1","temp_c":29.4}</code>. Braces make an object, quotes wrap names and text, numbers have no quotes, and commas separate items.</p>
+    <p>Here is the board's side of the story as code (ESP32 shown; the idea is the same on the Uno R4 WiFi and the ESP8266, only the <code>#include</code> names change). Tap each numbered line.</p>
+    ${anat("Send one reading, line by line", [
+     ["#include <WiFi.h>", "The Wi-Fi toolbox for the ESP32."],
+     ["#include <HTTPClient.h>", "The toolbox for sending requests."],
+     ['const char* URL = "https://YOUR-SERVER/readings";', "Where to send the order. <b>Placeholder</b>: your real address comes from your track."],
+     ['const char* KEY = "YOUR_API_KEY";', "Your ticket. In shared code it stays a placeholder; the real key lives only on your own board."],
+     ["float t = 29.4;", "Pretend this came from the sensor."],
+     ['String body = String("{\\"device_id\\":\\"team1\\",\\"temp_c\\":") + String(t, 1) + "}";', "Build the JSON note by joining pieces of text. <code>\\\"</code> means “a quote mark inside the text”. <code>String(t, 1)</code> turns 29.4 into text with one decimal."],
+     ["HTTPClient http;", "Make a client: the customer."],
+     ["http.begin(URL);", "Say where the order goes."],
+     ['http.addHeader("Content-Type", "application/json");', "A label on the envelope: “the note inside is JSON”."],
+     ['http.addHeader("x-api-key", KEY);', "Show the ticket."],
+     ["int code = http.POST(body);", "Send the order (POST = “take this”). The status code comes back as a number in <code>code</code>."],
+     ["Serial.println(code);", "Print it: 201 or 200 is good, 403 means check the key, 404 check the address, a negative number means it never reached the server (Wi-Fi problem)."],
+     ["http.end();", "Hang up politely and free the memory."]])}
+    <div class="casebox"><b>Use case: the school weather station</b>Every 60 s the roof-top board POSTs temperature, humidity and light to a server. Students open a chart at lunch to compare today with last week. The status code in the Serial Monitor tells you at a glance whether the last upload worked.</div>
+    <div class="expbox"><b>Try it</b>In the games below, deliberately break things: delete a quote from the JSON, then change <code>/readings</code> to <code>/reading</code>. Which status code does each mistake produce, and which side (your board or the server) is at fault?</div>`, interactive:["restaurantFlow","packetJourney","statusGame","jsonBuilder"]},
    {id:"mqtt", title:"MQTT: publish and subscribe", keys:"mqtt publish subscribe broker topic qos", html:`
-    <p>HTTP is request→response. <b>MQTT</b> is a lightweight message system for devices (${ct("mqtt")}): a device <b>publishes</b> a message to a <b>topic</b> (like <code>sss/team1/telemetry</code>) on a <b>broker</b>, and anything that <b>subscribes</b> to that topic receives it. It keeps one connection open, so it is efficient for many small messages and for sending commands back to the device. AWS IoT Core uses MQTT (Track C, path 2).</p>`, interactive:"mqttSim"},
+    <p class="plain"><b>In plain words</b>HTTP is like phoning a shop every time you have a question: dial, ask, hang up. <b>MQTT</b> is like a <b>radio station</b>. A device (the <b>publisher</b>) talks into one <b>channel</b> (the <b>topic</b>); a middle-man (the <b>broker</b>) rebroadcasts it; anyone tuned in (a <b>subscriber</b>) hears it immediately. The connection stays open, so messages are tiny and instant, and a phone can also send a message <i>back</i> to the board (“turn the fan on”).</p>
+    <table class="t"><tr><th>You want to…</th><th>Better fit</th></tr><tr><td>Save a reading to a table once a minute</td><td>HTTP (simple, works everywhere)</td></tr><tr><td>Turn a fan on from your phone right now</td><td>MQTT (two-way, instant)</td></tr><tr><td>Hundreds of sensors sending small messages</td><td>MQTT (light on battery and data)</td></tr></table>
+    <p>HTTP is request→response. <b>MQTT</b> is a lightweight message system for devices (${ct("mqtt")}): a device <b>publishes</b> a message to a <b>topic</b> (like <code>sss/team1/telemetry</code>) on a <b>broker</b>, and anything that <b>subscribes</b> to that topic receives it. It keeps one connection open, so it is efficient for many small messages and for sending commands back to the device. AWS IoT Core uses MQTT (Track C, path 2).</p>
+    ${anat("MQTT publish and subscribe, line by line", [
+     ["#include <PubSubClient.h>", "A popular MQTT library (install it from the Library Manager)."],
+     ["WiFiClient net;", "The network connection MQTT rides on."],
+     ["PubSubClient mqtt(net);", "The MQTT client object."],
+     ['mqtt.setServer("YOUR_BROKER_HOST", 1883);', "Which broker, and the usual port number. Placeholder host."],
+     ['mqtt.connect("team1-board");', "Join the broker with a unique name for this device."],
+     ['mqtt.subscribe("sss/team1/fan");', "<b>Listen</b> to the channel where commands arrive."],
+     ['mqtt.publish("sss/team1/temp", "29.4");', "<b>Speak</b> on the temperature channel. Anyone subscribed gets “29.4”."],
+     ["mqtt.loop();", "Call this often in <code>loop()</code>: it keeps the connection alive and delivers incoming messages."]])}
+    <div class="casebox"><b>Use case: the classroom fan</b>The board publishes <code>sss/team1/temp</code> every 10 s. A phone app subscribes to see it live and publishes <code>sss/team1/fan</code> = <code>ON</code> to start a fan. Two-way control is the strength of MQTT.</div>`, interactive:"mqttSim"},
    {id:"wifi", title:"Wi-Fi in code, and keeping secrets", keys:"wifi connect reconnect 2.4 ghz secrets", html:`
+    <p class="plain"><b>In plain words</b>A Wi-Fi connection is a phone call that can drop. Good code does three things: <b>(1) joins</b> at start-up, <b>(2) checks</b> that it is still connected before each upload, and <b>(3) rejoins</b> when the link is lost, without freezing the whole program. Think of it as “dial, check the line before you speak, redial if it dropped”.</p>
     <p>The boards use <b>2.4 GHz</b> Wi-Fi only (not 5 GHz). Your code should (1) connect, (2) check the status before each upload, and (3) reconnect when the link drops, without blocking forever.</p>
+    ${anat("Connect and stay connected (ESP32)", [
+     ["#include <WiFi.h>", "Wi-Fi toolbox."],
+     ['const char* SSID = "YOUR_WIFI_NAME";', "Your network name: a <b>placeholder</b> in anything you share."],
+     ['const char* PASS = "YOUR_WIFI_PASSWORD";', "Your password: never paste the real one into a chat or a public repo."],
+     ["void connectWifi() {", "A small helper we can call any time."],
+     ["  if (WiFi.status() == WL_CONNECTED) return;", "Already connected? Do nothing."],
+     ["  WiFi.begin(SSID, PASS);", "Start joining the network."],
+     ["  unsigned long t0 = millis();", "Remember when we started trying."],
+     ["  while (WiFi.status() != WL_CONNECTED && millis() - t0 < 15000) delay(250);", "Wait up to 15 s, checking every quarter second, then give up (so the board never freezes forever)."],
+     ["}", ""],
+     ["// call connectWifi(); at the start of setup() and before every upload", "This single habit fixes most “it worked yesterday” problems."]])}
     ${progBlock("wifi")}
+    <div class="casebox"><b>Use case: the school network</b>Many school networks use a login page (a <i>captive portal</i>) that a board cannot fill in. A phone hotspot set to 2.4 GHz is the fast workaround while you ask IT for a board-friendly network.</div>
     ${troubleshoot([["Never connects","5 GHz network, wrong password, or a captive portal","Use a 2.4 GHz network or a phone hotspot; type the password again"],["Connects, then drops","Weak signal or power dip","Move closer; use a 1 A power supply"],["Works at home, not at school","Network requires a login page","Ask your teacher for a network without a portal, or use a hotspot"]])}
     ${secretsBox}
     ${noKit}`, interactive:["wifiDoctor","secretScan","sandbox:sb_wifi"]},
@@ -43,6 +89,8 @@ COURSE.push({id:"u3", title:"Unit 3: IoT set-up tracks", sub:"Five ways to send 
    {q:"Which status code means 'not allowed' because a key or token is wrong?", o:["200","403","404","302"], a:1, e:"401 and 403 are authorization problems.", w:["OK.","","Wrong URL.","Redirect."]},
    {q:"In MQTT, who delivers messages between devices?", o:["The router","A broker","The Serial Monitor","A spreadsheet"], a:1, e:"Publishers and subscribers talk through a broker.", w:["","","",""]},
    {q:"Why is a board's Wi-Fi password never put in a public repository?", o:["It is too long","Anyone can read a public repo and join your network","GitHub deletes it","It slows uploads"], a:1, e:"Public code is public: secrets must stay local.", w:["","","",""]},
+   {q:"Your board prints 403 after sending a reading. What is the best first check?", o:["Buy a faster board","The API key or token","The sensor wiring","The baud rate"], a:1, e:"403 means the server understood but refused: the key or permission is wrong.", w:["","","",""]},
+   {q:"Which is a good fit for MQTT?", o:["Saving one row per minute to a spreadsheet","Turning a fan on from a phone instantly","Printing a PDF","Reading a DHT sensor"], a:1, e:"MQTT keeps a connection open and works both ways.", w:["HTTP is simple enough for that.","","",""]},
    {q:"The 2.4 GHz rule means…", o:["Your board cannot use 5 GHz networks","Your board cannot use hotspots","The board needs 2.4 V","Wi-Fi works only 2.4 hours"], a:0, e:"These boards only support 2.4 GHz Wi-Fi.", w:["","Hotspots work if set to 2.4 GHz.","",""]}
   ],
   rating:["I know Wi-Fi is involved.","I can name the five parts and read a status code.","I connected a board (or the sandbox) and fixed a drop.","I can choose a track and justify it."],
@@ -54,11 +102,13 @@ COURSE.push({id:"u3", title:"Unit 3: IoT set-up tracks", sub:"Five ways to send 
   intro:"The most transparent track: your Sheet is the database, an Apps Script web app is the server, and Colab is where you analyze. You will build every layer yourself, so you can explain every layer.",
   objectives:["Create a Sheet and an Apps Script web app that accepts readings with an API key.","Deploy it correctly and test it from a browser.","Send readings from your board or the sandbox.","Read the Sheet in Colab with pandas.","Serve a dashboard from the same script."],
   sections:[
-   {id:"a1", title:"Step A1: Create the Sheet", keys:"google sheet create", html:`${trackNote("A")}
+   {id:"a1", title:"Step A1: Create the Sheet", keys:"google sheet create", html:`
+    <p class="plain"><b>In plain words</b>A Google Sheet is a spreadsheet in the cloud that you already know how to use. In this step you prepare the table that will hold every reading: one column per measurement, one row per reading.</p>${trackNote("A")}
     <ol class="stepsl"><li>Open <b>sheets.google.com</b> and create a blank spreadsheet. Name it <b>SSS Sensor Data</b>.</li>
      <li>Leave it empty: the script creates a tab named <b>Readings</b> with the header row the first time it runs.</li>
      <li>We store data in a <b>long</b> format: one row per reading (<code>timestamp, device_id, sensor, value</code>), so new sensors never need new columns.</li></ol>`, interactive:"longWide"},
    {id:"a2", title:"Step A2: Add the server code", keys:"apps script code.gs doGet lockservice validate", html:`
+    <p class="plain"><b>In plain words</b><b>Apps Script</b> is a small program that lives inside Google. This one waits for your board's note, checks it, and writes a new row in the Sheet. It is your own tiny server, and the only code you need to read twice.</p>
     <ol class="stepsl"><li>In the Sheet choose <b>Extensions → Apps Script</b>. Rename the project <b>SSS Logger</b>.</li>
      <li>Replace the contents of <b>Code.gs</b> with the code below. Change <code>API_KEY</code> to your own long random text.</li>
      <li>Click <b>+ → HTML</b>, name the file <b>Index</b> (without .html), and paste the dashboard page from Step A6 later (you can leave it for now).</li>
@@ -68,16 +118,19 @@ COURSE.push({id:"u3", title:"Unit 3: IoT set-up tracks", sub:"Five ways to send 
     ${mis(`<p>Saving the code but not <b>deploying a new version</b>. The /exec URL keeps running the old code until you choose <b>Deploy → Manage deployments → Edit → New version</b>.</p>`)}
     ${srcs(["appsScript","asQuotas"])}`, interactive:["as:as_hello,as_params,as_log,as_key,as_validate,as_latest","lockRace"]},
    {id:"a3", title:"Step A3: Deploy and test", keys:"deploy web app exec url test", html:`
+    <p class="plain"><b>In plain words</b><b>Deploying</b> turns the script into a public web address, like opening a shop with a door. You test the door with a browser first, so you know the problem is not the board.</p>
     <ol class="stepsl"><li>Click <b>Deploy → New deployment → ⚙ → Web app</b>.</li>
      <li>Set <b>Execute as: Me</b> and <b>Who has access: Anyone</b>. (The board has no Google login, so the API key is the protection.)</li>
      <li>Click <b>Deploy</b> and copy the <b>Web app URL</b> ending in <code>/exec</code>.</li>
      <li>Test in a browser: <code>YOUR_URL?key=YOUR_API_KEY&amp;device_id=test&amp;temp_c=25</code>. You should see <code>OK:1</code> and a new row. Try a wrong key: <code>ERR:key</code>.</li></ol>`, interactive:["urlDissector","redirectViz","deployFlow"]},
    {id:"a4", title:"Step A4: Send readings from the board", keys:"esp send reading https get sheet", html:`
+    <p class="plain"><b>In plain words</b>Now the board becomes the customer: it builds the address with the temperature on the end and visits it. The Sheet gets a new row.</p>
     <p>The board builds the same URL you typed. Apps Script answers with a redirect (302), which the sketch follows.</p>
     ${progBlock("hello")}
     ${noKit}
     ${secretsBox}`, interactive:"sandbox:sb_logger"},
    {id:"a5", title:"Step A5: Analyze in Colab", keys:"colab pandas gspread read sheet", html:`
+    <p class="plain"><b>In plain words</b><b>Colab</b> is a free notebook where you write Python. It reads the Sheet and gives you averages and charts. This is where raw rows become answers.</p>
     ${colabStep("Your Google account signs in to Colab, so the Sheet stays private.")}
     ${code("python", `# Cell 1: sign in and open the Sheet
 from google.colab import auth
@@ -97,6 +150,7 @@ wide.plot(subplots=True, figsize=(9, 6))`, "Colab cell 2")}
     ${tip("Why long format?", `<p>Long format (one row per reading) is tidy data (${ct("tidy")}): every variable is a column and every observation is a row. <code>pivot_table</code> turns it into a wide table when you need one column per sensor.</p>`)}
     ${srcs(["colab","pandas","tidy"])}`, interactive:"schemaDesigner"},
    {id:"a6", title:"Step A6: The dashboard page", keys:"index.html dashboard google.script.run", html:`
+    <p class="plain"><b>In plain words</b>A <b>dashboard</b> is just a web page that fetches your latest rows and draws them. It is the part other people will actually look at.</p>
     <p>The same web app serves a dashboard when a <i>person</i> opens the URL (no key). Create the <b>Index</b> HTML file and paste the page below. It calls <code>getLatest()</code> on the server with <code>google.script.run</code>, shows the newest value of each sensor as a card, and draws a chart.</p>
     ${dlcode("Index.html", PROJECT_HTML, "Index.html (dashboard)")}
     ${troubleshoot([["Browser shows 'script function not found: doGet'","Code not saved, or new version not deployed","Save, then Deploy → Manage deployments → New version"],["Board prints ERR:key","Key differs by one character or a space","Copy-paste the key into both places"],["Nothing appears in the Sheet","You opened the old deployment URL","Use the newest /exec URL"],["Dashboard says 'Could not load data'","Index.html missing or has a script error","Open the browser console and read the first red error"]])}`, interactive:["dashPreview","web:web_gas"]}
@@ -116,7 +170,8 @@ wide.plot(subplots=True, figsize=(9, 6))`, "Colab cell 2")}
   intro:"Firebase Realtime Database stores JSON and updates in real time. You will sign the device in properly, protect the database with rules, archive readings to a Sheet with Apps Script, and analyze them in Colab.",
   objectives:["Create a Firebase project with a Realtime Database and email sign-in.","Write security rules that require sign-in.","Send readings from the device with the REST API and an ID token.","Archive readings to a Sheet with an Apps Script trigger.","Read the data in Colab."],
   sections:[
-   {id:"b1", title:"Step B1: Project, database, and sign-in", keys:"firebase project realtime database authentication", html:`${trackNote("B")}
+   {id:"b1", title:"Step B1: Project, database, and sign-in", keys:"firebase project realtime database authentication", html:`
+    <p class="plain"><b>In plain words</b><b>Firebase</b> is Google's database that updates live. In this step you create a project, switch on a database and decide who may sign in.</p>${trackNote("B")}
     <ol class="stepsl"><li>Go to <b>console.firebase.google.com</b> → <b>Create a project</b>. Name it, and Analytics is optional.</li>
      <li>Open <b>Build → Realtime Database → Create database</b>. Pick the region closest to you. Choose <b>locked mode</b>. (Test mode is open to the world for 30 days: do not use it.)</li>
      <li>Copy the database URL shown at the top of the Data tab, like <code>https://your-project-default-rtdb.firebaseio.com</code>.</li>
@@ -125,6 +180,7 @@ wide.plot(subplots=True, figsize=(9, 6))`, "Colab cell 2")}
      <li>In <b>Project settings → General</b> copy the <b>Web API Key</b>. It identifies your project; it is not a password, but do not publish it with your device password.</li></ol>
     ${srcs(["firebaseRtdb","firebaseAuth"])}`, interactive:""},
    {id:"b2", title:"Step B2: Rules", keys:"firebase rules auth read write", html:`
+    <p class="plain"><b>In plain words</b><b>Rules</b> are the lock on the database. Without them anyone on the internet could read or write your data, so this step is about safety.</p>
     <p>Open the <b>Rules</b> tab and replace the rules with the following, then <b>Publish</b>:</p>
     ${code("json", `{
   "rules": {
@@ -136,6 +192,7 @@ wide.plot(subplots=True, figsize=(9, 6))`, "Colab cell 2")}
     ${mis(`<p>Leaving the rules as <code>".read": true, ".write": true</code>. Anyone who finds your URL can read, change, or delete your data.</p>`)}
     ${srcs(["firebaseRules"])}`, interactive:""},
    {id:"b3", title:"Step B3: Send readings from the device", keys:"firebase rest idtoken signinwithpassword push put", html:`
+    <p class="plain"><b>In plain words</b>The board logs in with its own account (getting a token, a short-lived ticket) and then writes readings. Two small requests instead of one.</p>
     <p>The device signs in with the Auth REST API and receives an <b>ID token</b> that lasts about one hour. It then sends each reading to <code>/readings.json?auth=TOKEN</code> with <b>POST</b> (Firebase creates a unique key per reading) and the newest reading to <code>/latest.json</code> with <b>PUT</b> (${ct("firebaseRest")}).</p>
     ${progBlock("firebase")}
     <p>Set <code>USE_AUTH</code> to <b>true</b> once your rules require sign-in. Fill <code>API_KEY</code>, <code>DEVICE_EMAIL</code>, <code>DEVICE_PASS</code>, <code>DB_HOST</code> with your values; never commit them.</p>
@@ -143,6 +200,7 @@ wide.plot(subplots=True, figsize=(9, 6))`, "Colab cell 2")}
     ${secretsBox}
     ${troubleshoot([["401 Permission denied","Rules need sign-in but USE_AUTH is false, or the token expired","Set USE_AUTH true; sign in again after about 55 minutes"],["Sign-in failed: EMAIL_NOT_FOUND / INVALID_PASSWORD","Account or password differs","Check the Users tab and retype"],["400 invalid JSON","Missing quote or comma in the body","Print the body before sending"]])}`, interactive:"sandbox:sb_fb1,sb_fb2"},
    {id:"b4", title:"Step B4: Archive with Apps Script", keys:"apps script firebase trigger archive sheet oauth", html:`
+    <p class="plain"><b>In plain words</b>The live database is fast but not tidy for long-term study. A scheduled Apps Script copies readings into a Sheet so you can keep and analyse them.</p>
     <p>Apps Script can read the database with your Google account and copy new readings into a Sheet on a schedule. This gives you a shareable table and a backup.</p>
     <ol class="stepsl"><li>Create a new Sheet <b>Firebase Archive</b>, then <b>Extensions → Apps Script</b>.</li>
      <li>Open <b>Project Settings</b> and tick <b>Show "appsscript.json" manifest file</b>. Add these scopes to <code>oauthScopes</code>: <code>https://www.googleapis.com/auth/script.external_request</code>, <code>https://www.googleapis.com/auth/spreadsheets</code>, <code>https://www.googleapis.com/auth/firebase.database</code>, <code>https://www.googleapis.com/auth/userinfo.email</code>.</li>
@@ -162,6 +220,7 @@ function archive() {
 }`, "Apps Script: copy new Firebase readings into a Sheet")}
     <p class="explain">If Firebase rejects the Google token in your project, check the REST documentation (${ct("firebaseRest")}) for the current OAuth option, or let Colab read the database directly (next step).</p>`, interactive:""},
    {id:"b5", title:"Step B5: Analyze in Colab", keys:"colab firebase requests pandas secrets", html:`
+    <p class="plain"><b>In plain words</b>Same idea as Track A5: pull the data into Python and look at it. The only new part is signing in with a secret that stays in Colab, not in the notebook text.</p>
     ${colabStep("Store your values in Colab's key icon (Secrets): FB_API_KEY, FB_EMAIL, FB_PASS. Never paste them into a cell.")}
     ${code("python", `import requests, pandas as pd
 from google.colab import userdata
@@ -191,7 +250,8 @@ df.describe()`, "Colab: read Firebase directly")}
   intro:"The professional route. Path 1 sends readings over HTTPS through API Gateway and Lambda into DynamoDB. Path 2 uses AWS IoT Core with MQTT and certificates. You will also set a billing alarm first, so there are no surprises.",
   objectives:["Create an AWS account safely with a budget alert.","Build DynamoDB + Lambda + API Gateway and send readings with an API key.","Create an IoT Core thing, certificate, and policy, and publish with MQTT.","Route MQTT messages to DynamoDB with a rule.","Read the table from Colab and clean up resources."],
   sections:[
-   {id:"c0", title:"Step C0: Account, region, and a billing alarm", keys:"aws account budget billing free tier region", html:`${trackNote("C")}
+   {id:"c0", title:"Step C0: Account, region, and a billing alarm", keys:"aws account budget billing free tier region", html:`
+    <p class="plain"><b>In plain words</b>AWS is a huge toolbox. Before touching anything we set a <b>billing alarm</b> so a mistake cannot become a surprise bill.</p>${trackNote("C")}
     <ol class="stepsl"><li>Create an AWS account (a credit card is required). Sign in as the <b>root user</b> only to set things up.</li>
      <li>Open <b>Billing → Budgets → Create budget</b>: a <b>zero-spend or small budget</b> with an email alert, before you create anything else.</li>
      <li>Choose one <b>Region</b> (for example Asia Pacific (Singapore) <code>ap-southeast-1</code>) and use it for every step; the console shows resources only for the selected region.</li>
@@ -199,12 +259,14 @@ df.describe()`, "Colab: read Firebase directly")}
     ${safety(`<p>Cloud costs are real. Set the budget alert first, delete what you create when you finish, and never leave a loop that sends messages every second all night.</p>`)}
     ${srcs(["awsPricing"])}`, interactive:""},
    {id:"c1", title:"Step C1: DynamoDB table", keys:"dynamodb table partition key sort key", html:`
+    <p class="plain"><b>In plain words</b><b>DynamoDB</b> is a simple table in the cloud. The <b>partition key</b> is the label that says which device a row belongs to; the <b>sort key</b> is the time.</p>
     <ol class="stepsl"><li>Open <b>DynamoDB → Tables → Create table</b>.</li>
      <li>Table name <code>sss_readings</code>. Partition key <code>device_id</code> (String). Sort key <code>ts</code> (Number: Unix time in seconds).</li>
      <li>Keep <b>on-demand</b> capacity (pay per request) and create the table.</li></ol>
     <p>A DynamoDB item is a set of attributes. The partition key groups a device's readings; the sort key orders them by time (${ct("awsDdb")}).</p>
     ${srcs(["awsDdb"])}`, interactive:""},
    {id:"c2", title:"Step C2: Lambda function", keys:"lambda python put_item role", html:`
+    <p class="plain"><b>In plain words</b><b>Lambda</b> is a tiny function that runs only when called. It receives your note and saves it in DynamoDB. You pay almost nothing when it is idle.</p>
     <ol class="stepsl"><li>Open <b>Lambda → Create function → Author from scratch</b>. Name <code>sss_ingest</code>, runtime <b>Python 3.12</b> (or newer).</li>
      <li>Under <b>Configuration → Environment variables</b> add <code>TABLE</code> = <code>sss_readings</code>.</li>
      <li>Under <b>Configuration → Permissions</b>, open the role and attach a policy that allows <code>dynamodb:PutItem</code> on your table only.</li>
@@ -228,6 +290,7 @@ def lambda_handler(event, context):
         return {'statusCode': 400, 'body': json.dumps({'ok': False, 'error': 'bad request'})}`, "Lambda: validate and store one reading")}
     ${srcs(["awsLambda"])}`, interactive:""},
    {id:"c3", title:"Step C3: API Gateway with an API key", keys:"api gateway rest api key usage plan stage x-api-key", html:`
+    <p class="plain"><b>In plain words</b><b>API Gateway</b> is the front door that gives Lambda a public address and checks the API key. No key, no entry.</p>
     <ol class="stepsl"><li>Open <b>API Gateway → Create API → REST API → Build</b>. Name <code>sss_api</code>.</li>
      <li><b>Create resource</b> <code>readings</code>, then <b>Create method → POST</b> with <b>Lambda function</b> integration (tick <b>Lambda proxy integration</b>) pointing to <code>sss_ingest</code>.</li>
      <li>In <b>Method request</b> set <b>API key required</b> to true.</li>
@@ -238,6 +301,7 @@ def lambda_handler(event, context):
     ${troubleshoot([["403 Forbidden","Missing or wrong x-api-key header, or key not attached to the usage plan","Check the header name and the usage plan"],["500 Internal server error","Lambda error","Open CloudWatch logs for the function"],["Item missing fields","Field not in the allowed list","Add the name to the list in the Lambda code"]])}
     ${srcs(["awsApigw"])}`, interactive:"sandbox:sb_aws"},
    {id:"c4", title:"Step C4: IoT Core, certificates, and MQTT", keys:"aws iot core thing certificate policy endpoint mqtt rule", html:`
+    <p class="plain"><b>In plain words</b><b>IoT Core</b> is AWS's MQTT broker. The board proves who it is with a <b>certificate</b> (a digital ID card) instead of a password.</p>
     <ol class="stepsl"><li>Open <b>IoT Core → Settings</b> and copy your <b>Device data endpoint</b> (<code>xxxx-ats.iot.REGION.amazonaws.com</code>).</li>
      <li><b>Manage → All devices → Things → Create things → Create single thing</b>. Name <code>sss-device-01</code>, auto-generate a certificate.</li>
      <li>Download the <b>device certificate</b>, the <b>private key</b>, and <b>Amazon Root CA 1</b>. The private key can be downloaded only once. Keep it out of GitHub.</li>
@@ -250,6 +314,7 @@ def lambda_handler(event, context):
     ${secretsBox}
     ${srcs(["awsIot","mqtt"])}`, interactive:["mqttSim","sandbox:sb_mqtt"]},
    {id:"c5", title:"Step C5: Analyze in Colab, then clean up", keys:"boto3 dynamodb colab iam read only cleanup", html:`
+    <p class="plain"><b>In plain words</b>Read the stored data back with Python, then <b>clean up</b>: delete what you created so it cannot cost money while you sleep.</p>
     <ol class="stepsl"><li>In <b>IAM → Users → Create user</b> <code>colab-reader</code>, attach a policy allowing only <code>dynamodb:Query</code> and <code>dynamodb:Scan</code> on <code>sss_readings</code>. Create an <b>access key</b> and store it in Colab Secrets (<code>AWS_KEY</code>, <code>AWS_SECRET</code>).</li></ol>
     ${code("python", `!pip -q install boto3
 import boto3, pandas as pd
@@ -282,7 +347,8 @@ df.sort_values('time').head()`, "Colab: read DynamoDB")}
   intro:"Blynk gives you a ready-made dashboard on the web and on your phone. You describe your data once in a template, and your board connects with a token. It is the fastest way to a good-looking control panel.",
   objectives:["Create a Blynk template with datastreams (V0, V1, V2).","Build a web dashboard with a gauge, a chart, and a switch.","Connect a board with the Blynk library and send/receive values.","Export data and open it in Colab."],
   sections:[
-   {id:"d1", title:"Step D1: Template and datastreams", keys:"blynk template datastream virtual pin console", html:`${trackNote("D")}
+   {id:"d1", title:"Step D1: Template and datastreams", keys:"blynk template datastream virtual pin console", html:`
+    <p class="plain"><b>In plain words</b>Blynk gives you a ready-made phone and web dashboard. A <b>template</b> is the blueprint; a <b>datastream</b> is one named value (like “temperature”) that the board and the app share.</p>${trackNote("D")}
     <ol class="stepsl"><li>Create a free account at <b>blynk.cloud</b> and open <b>Blynk.Console</b>.</li>
      <li><b>Developer Zone → My Templates → New Template</b>. Name <code>Classroom Monitor</code>, hardware <b>ESP32</b> or <b>ESP8266</b>, connection <b>Wi-Fi</b>.</li>
      <li>On <b>Datastreams</b> add three <b>virtual pins</b>: <code>V0</code> Temperature (Double, 0–50, °C), <code>V1</code> Humidity (Double, 0–100, %), <code>V2</code> LED switch (Integer, 0–1).</li>
@@ -290,6 +356,7 @@ df.sort_values('time').head()`, "Colab: read DynamoDB")}
      <li>Save the template. Then <b>Devices → New Device → From template</b>. Open the device's <b>Firmware configuration</b>: copy <code>BLYNK_TEMPLATE_ID</code>, <code>BLYNK_TEMPLATE_NAME</code>, and <code>BLYNK_AUTH_TOKEN</code>.</li></ol>
     ${srcs(["blynkDocs"])}`, interactive:""},
    {id:"d2", title:"Step D2: Program the board", keys:"blynk library blynktimer virtualwrite blynk_write", html:`
+    <p class="plain"><b>In plain words</b>The board connects with an <b>auth token</b> (its password for Blynk) and writes each value to a <b>virtual pin</b>, which is just a named slot in the app.</p>
     <p>Install the <b>Blynk</b> library (by Volodymyr Shymanskyy) from the Library Manager. The three <code>#define</code> lines must come <b>before</b> the Blynk <code>#include</code>. Use <code>Blynk.virtualWrite(V0, value)</code> to send and <code>BLYNK_WRITE(V2)</code> to receive a switch press. A <code>BlynkTimer</code> sends readings without <code>delay()</code>.</p>
     ${progBlock("blynk")}
     <div class="callout tip"><b>Uno R4 WiFi</b><p>Blynk's support for the Uno R4 WiFi works differently from the ESP boards (it relies on Blynk's own firmware for the board's Wi-Fi chip). Check Blynk's current documentation (${ct("blynkDocs")}) before you start. This track's tutorial and sandbox use an ESP board.</p></div>
@@ -298,6 +365,7 @@ df.sort_values('time').head()`, "Colab: read DynamoDB")}
     ${troubleshoot([["Device stays offline","Template/token mismatch or 5 GHz Wi-Fi","Copy all three defines again; use 2.4 GHz"],["Gauge shows nothing","Datastream range or pin differs","Match V0 to the code and the range to your data"],["Switch does nothing","No BLYNK_WRITE handler for that pin","Add BLYNK_WRITE(V2) and set the LED there"]])}
     ${srcs(["blynkDocs"])}`, interactive:"sandbox:sb_blynk"},
    {id:"d3", title:"Step D3: Limits and exporting data", keys:"blynk free plan limits export csv colab", html:`
+    <p class="plain"><b>In plain words</b>Free plans have limits. This step shows how to check them and how to export your data so you can analyse it outside Blynk.</p>
     <p>The free plan allows a small number of devices and keeps only a short history (about a week at the time of writing), so data science needs an <b>export</b>: in the Console open the device's <b>Data</b> or the chart's download option and save a CSV (${ct("blynkPricing")}). Then, in Colab:</p>
     ${code("python", `from google.colab import files
 import pandas as pd
@@ -321,7 +389,8 @@ df.head()`, "Colab: load a Blynk export")}
   intro:"ThingSpeak, from MathWorks, turns a few lines of code into a chart. You create a channel with fields, write to it with a key, and view it on a public or private page.",
   objectives:["Create a ThingSpeak channel with fields and keys.","Send readings from the board with the ThingSpeak library or a GET request.","Respect the update limit and interpret library return codes.","Download the feed in Colab."],
   sections:[
-   {id:"e1", title:"Step E1: Channel and keys", keys:"thingspeak channel field write api key read api key", html:`${trackNote("E")}
+   {id:"e1", title:"Step E1: Channel and keys", keys:"thingspeak channel field write api key read api key", html:`
+    <p class="plain"><b>In plain words</b>A ThingSpeak <b>channel</b> is a folder with up to 8 numbered <b>fields</b> (field1, field2…). There are two keys: one to <b>write</b>, one to <b>read</b>.</p>${trackNote("E")}
     <ol class="stepsl"><li>Create a free MathWorks account and open <b>thingspeak.com</b> → <b>Channels → My Channels → New Channel</b>.</li>
      <li>Name it and enable <b>Field 1</b> (Temperature) and <b>Field 2</b> (Humidity); up to 8 fields are available per channel. Save.</li>
      <li>Open <b>API Keys</b>: copy the <b>Channel ID</b> and the <b>Write API Key</b>. The <b>Read API Key</b> is for apps that only read.</li></ol>
@@ -329,6 +398,7 @@ df.head()`, "Colab: load a Blynk export")}
     <p class="explain">Figures from MathWorks' documentation at the time of writing (${ct("tsDocs")}); confirm before planning.</p>
     ${srcs(["tsDocs"])}`, interactive:""},
    {id:"e2", title:"Step E2: Send from the board", keys:"thingspeak library writefields return code 200 -401", html:`
+    <p class="plain"><b>In plain words</b>With the ThingSpeak library you set each field and call one function. It returns <b>200</b> when it worked and a negative number when it did not.</p>
     <p>Install <b>ThingSpeak</b> (by MathWorks). Use <code>ThingSpeak.setField(1, temp)</code>, <code>setField(2, hum)</code>, then <code>ThingSpeak.writeFields(channelId, writeKey)</code>. The return value is <b>200</b> on success; other values explain the problem (${ct("tsLib")}).</p>
     ${progBlock("thingspeak")}
     <table class="t"><tr><th>Code</th><th>Meaning</th></tr><tr><td>200</td><td>Success</td></tr><tr><td>404</td><td>Wrong channel or key</td></tr><tr><td>-301</td><td>Failed to connect</td></tr><tr><td>-401</td><td>Updated too soon (under 15 s)</td></tr><tr><td>-210</td><td>No fields were set</td></tr></table>
@@ -336,6 +406,7 @@ df.head()`, "Colab: load a Blynk export")}
     ${secretsBox}
     ${srcs(["tsLib","tsDocs"])}`, interactive:"sandbox:sb_ts"},
    {id:"e3", title:"Step E3: Visualize and download", keys:"thingspeak charts public colab csv feeds", html:`
+    <p class="plain"><b>In plain words</b>ThingSpeak draws charts for you and lets you download the data as a CSV file for Colab.</p>
     <p>Each field gets a chart automatically. You can add a <b>Numeric Display</b> or <b>Gauge</b> widget. A private channel shows data only to you; a public channel can be shared with a link. To analyze in Colab, download the feed as CSV (use the Read API Key for a private channel):</p>
     ${code("python", `import pandas as pd
 CHANNEL = 'YOUR_CHANNEL_ID'

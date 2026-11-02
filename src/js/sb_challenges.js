@@ -4,7 +4,7 @@ const buzPin = b => ({pin:pinK(b, "BUZZER_PIN"), label:"Buzzer", color:"#7C3AED"
 const cpp = (b, s) => s.replace(/\{(\w+)\}/g, (m, k) => k === "ADC_MAX" ? BOARDS[b].adcMax + ".0" : k === "VOLTS" ? (b === "uno" ? "5.0" : "3.3") : k === "BOARDID" ? ({s3:"esp32s3", esp8266:"esp8266", uno:"unor4"})[b] : pinK(b, k));
 const WIFI_INC = b => b === "s3" ? "#include <WiFi.h>" : b === "esp8266" ? "#include <ESP8266WiFi.h>" : "#include <WiFiS3.h>";
 const SB = {
- sb_blink: {id:"sb_blink", title:"Warm-up: blink", sim:8000, task:"Make the external LED blink: ON for 0.5 s, then OFF for 0.5 s, forever.", criteria:["The LED blinks at least 5 times in 8 s","Each ON lasts about 500 ms","Each OFF lasts about 500 ms"],
+ sb_blink: {id:"sb_blink", title:"Warm-up: blink", sim:8000, task:"This sketch already blinks, but far too fast. Change <b>two numbers</b> so the LED is ON for 0.5 s and OFF for 0.5 s. (Only the numbers inside delay( ) need to change.)", criteria:["The LED blinks at least 5 times in 8 s","Each ON lasts about 500 ms","Each OFF lasts about 500 ms"],
   scenario:b => baseScenario(), pins:[ledPin],
   starter:b => cpp(b, `const int LED_PIN = {LED_PIN};
 
@@ -13,13 +13,13 @@ void setup() {
 }
 
 void loop() {
-  // TODO 1: turn the LED on
-  // TODO 2: wait 500 ms
-  // TODO 3: turn the LED off
-  // TODO 4: wait 500 ms
+  digitalWrite(LED_PIN, HIGH);  // LED on
+  delay(100);                   // CHANGE ME: wait this many milliseconds (1000 ms = 1 s)
+  digitalWrite(LED_PIN, LOW);   // LED off
+  delay(100);                   // CHANGE ME: wait this many milliseconds
 }
 `),
-  hints:["digitalWrite(LED_PIN, HIGH); turns the LED on and digitalWrite(LED_PIN, LOW); turns it off.","delay(500); waits 500 ms. Every statement ends with a semicolon ;"],
+  hints:["Half a second is 500 milliseconds (1000 ms = 1 second). The number inside delay( ) is the wait in milliseconds.","There are two delay( ) lines: the first one controls how long the LED stays ON, the second how long it stays OFF. Change both to 500.","Still stuck? Open the “Blink in three steps” lesson above and use step 3 to see what each number does."],
   solution:b => progSource(PROGRAMS.blink.lines, b),
   check:(r, b) => { const p = pinK(b, "LED_PIN"), s = segs(r, p), on = s.filter(x => x.v === 1 && x.full), off = s.filter(x => x.v === 0 && x.between);
    if (!s.some(x => x.v === 1)) return [fail("The LED never turned on.", "Check pinMode(LED_PIN, OUTPUT) in setup() and digitalWrite(LED_PIN, HIGH) in loop(). Is it the LED_PIN you wrote, with matching capital letters?")];

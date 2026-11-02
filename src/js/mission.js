@@ -174,7 +174,7 @@ function mountSandbox(el, ids){
   /* --- scene + replay --- */
   const bcol = b => b === "uno" ? "#008184" : b === "esp8266" ? "#1d2433" : "#1a1d21";
   const wifiAt = (r, t) => { let s = "off"; (r.net || []).forEach(x => { if (x.t > t || x.dir !== "wifi") return; s = /Connected/.test(x.text) ? "on" : /lost/.test(x.text) ? "off" : /Joining/.test(x.text) ? "joining" : s; }); return s; };
-  const render = (t) => { const b = bsel.value, P = play, S = P ? P.S : cur.scenario(b), r = P ? P.r : {ev:[], ser:[], net:[]};
+  const render = (t) => { t = Number.isFinite(t) ? t : 0; const b = bsel.value, P = play, S = P ? P.S : cur.scenario(b), r = P ? P.r : {ev:[], ser:[], net:[]};
     const ctx = {t, S, b, r, v:k => scenVal(S, k, t), led:P ? !!pinAt(r, pinK(b, "LED_PIN"), t) : false, buz:P ? !!pinAt(r, pinK(b, "BUZZER_PIN"), t) : false, net:(r.net || []).filter(x => x.t <= t), wifi:P ? wifiAt(r, t) : "off", bname:BOARDS[b].short, bcol:bcol(b), parts:meta().parts};
     svg.innerHTML = (SCENES[meta().scene] || SCENES.desk)(ctx);
     $(".ml-hud", el).textContent = `t = ${(t / 1000).toFixed(1)} s${P ? ` of ${(P.r.end / 1000).toFixed(0)} s` : ""}`;

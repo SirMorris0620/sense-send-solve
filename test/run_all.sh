@@ -11,6 +11,7 @@ echo "== 2. Build (preview mode for tests) =="
 SSS_PREVIEW=1 python3 build.py
 echo "== 2b. Data-science labs, guided exercises and every Python cell in Unit 4 =="
 python3 test/ds_labs_test.py
+python3 test/rev_labs_test.py
 python3 test/colab_cells_test.py
 echo "== 3. Backend tests against a mock Apps Script (fresh mock for each test) =="
 for t in security_test assess_test signin_test flow_test; do

@@ -21,45 +21,6 @@ INTERACTIVES.ohmLab = function(el){
   const anim = () => { if (!alive(el)) return cancelAnimationFrame(raf); t += (V / R) * 400; const n = 6; $(".olDrops", el).innerHTML = Array.from({length:n}, (_, i) => { const x = 60 + ((t + i * 220 / n) % 220); return `<circle cx="${x}" cy="140" r="3.5" fill="#2563EB"/>`; }).join(""); raf = requestAnimationFrame(anim); };
   el.querySelectorAll("input").forEach(x => x.oninput = draw); draw(); if (!reduceMotion()) anim();
 };
-/* ---- 2.1 LED resistor calculator ---- */
-INTERACTIVES.ledCalc = function(el){
-  const E12 = [10,12,15,18,22,27,33,39,47,56,68,82], std = r => { for (let d = 1; d <= 100000; d *= 10) for (const v of E12) if (v * d >= r) return v * d; return r; };
-  const LEDS = {red:[2.0,"#D62828"], yellow:[2.1,"#E8B84A"], green:[2.2,"#4F46E5"], blue:[3.1,"#2563EB"], white:[3.1,"#E5E7EB"]};
-  el.innerHTML = bench("LED resistor calculator", `<div class="controls"><label>Supply <select class="dinput lcS"><option value="3.3">3.3 V pin (ESP32-S3, ESP8266)</option><option value="5">5 V pin (Uno R4 WiFi)</option></select></label>
-   <label>LED color <select class="dinput lcC">${Object.keys(LEDS).map(k => `<option>${k}</option>`).join("")}</select></label><label>Current <select class="dinput lcI"><option value="0.005">5 mA (dim)</option><option value="0.01" selected>10 mA (good)</option><option value="0.02">20 mA (bright, maximum for most 5 mm LEDs)</option></select></label></div>
-   <div class="ix-grid2"><div class="ix-out lcOut"></div><svg class="flowsvg" viewBox="0 0 260 120" aria-label="LED circuit"><text x="10" y="64" class="svgtxt b lcVt">3.3 V</text><path d="M50 60 H90" stroke="var(--ink)" stroke-width="2"/><rect x="90" y="50" width="50" height="20" rx="4" fill="#E8D8B0" stroke="var(--ink)"/><text x="115" y="44" text-anchor="middle" class="svgtxt lcRt"></text><path d="M140 60 H170" stroke="var(--ink)" stroke-width="2"/><path d="M170 46 V74 L196 60 Z" class="lcLed" stroke="var(--ink)"/><path d="M196 46 V74 M196 60 H240 V100 H20 V80" stroke="var(--ink)" stroke-width="2" fill="none"/><text x="220" y="115" class="svgtxt">GND</text></svg></div>
-   <p class="explain">Typical forward voltages for illustration. Check your LED's datasheet: “blue” and “white” vary from about 2.8 to 3.4 V.</p>`);
-  const draw = () => { const Vs = +$(".lcS", el).value, c = $(".lcC", el).value, I = +$(".lcI", el).value, Vf = LEDS[c][0];
-    $(".lcVt", el).textContent = Vs + " V"; $(".lcLed", el).setAttribute("fill", LEDS[c][1]);
-    if (Vf >= Vs - 0.05){ $(".lcOut", el).innerHTML = `<b>This LED needs about ${Vf} V, almost all of the ${Vs} V supply.</b> It may be dim or not light at all. Use a 5 V supply through a transistor, or a different color.`; $(".lcRt", el).textContent = "?"; return; }
-    const R = (Vs - Vf) / I, Rs = std(R), Ireal = (Vs - Vf) / Rs, Pr = (Vs - Vf) * Ireal;
-    $(".lcRt", el).textContent = Rs >= 1000 ? Rs / 1000 + " kΩ" : Rs + " Ω";
-    $(".lcOut", el).innerHTML = `<div class="kv"><span>Exact</span><b>(${Vs} − ${Vf}) ÷ ${I} = ${R.toFixed(0)} Ω</b><span>Standard value (next one up)</span><b>${Rs} Ω</b><span>Real current</span><b>${(Ireal * 1000).toFixed(1)} mA</b><span>Resistor power</span><b>${(Pr * 1000).toFixed(1)} mW (a common ¼ W resistor is fine)</b></div>${Vs === 5 && Ireal > 0.008 ? `<p class="err"><b>Too much for an Uno R4 WiFi pin.</b> The RA4M1's pins are rated about 8 mA each (Arduino, n.d.). Choose 5 mA, or use at least 470 Ω, as this course does. For more current, switch the LED with a transistor.</p>` : Vs === 3.3 && Ireal > 0.012 ? `<p class="err"><b>High for a GPIO pin.</b> Keep each pin well under its limit (ESP8266 pins: about 12 mA). 10 mA or less is a safe choice.</p>` : ""}`;
-    markAct("ledCalc", "used"); };
-  el.querySelectorAll("select").forEach(x => x.onchange = draw); draw();
-};
-/* ---- 2.1 voltage divider lab ---- */
-INTERACTIVES.dividerLab = function(el){
-  const PRE = {echo:[5,1000,2000,"HC-SR04 ECHO → 3.3 V pin"], mq:[5,10000,15000,"MQ-135 AO (max) → 3.3 V pin"], ldr:[3.3,10000,10000,"LDR divider (R1 = LDR)"], custom:[5,4700,4700,"Custom"]};
-  el.innerHTML = bench("Voltage divider lab", `<div class="controls"><label>Preset <select class="dinput dvP">${Object.keys(PRE).map(k => `<option value="${k}">${PRE[k][3]}</option>`).join("")}</select></label></div>
-   <div class="ix-grid2"><div>
-    <div class="controls"><label>V<sub>in</sub> <input type="range" class="dvV" min="0" max="5" step="0.1"></label><span class="rangeval dvVv"></span></div>
-    <div class="controls"><label>R1 (top) <input type="range" class="dvR1" min="100" max="100000" step="100"></label><span class="rangeval dvR1v"></span></div>
-    <div class="controls dvLight" hidden><label>Light <input type="range" class="dvL" min="0" max="100" value="50"></label><span class="rangeval dvLv"></span></div>
-    <div class="controls"><label>R2 (bottom) <input type="range" class="dvR2" min="100" max="100000" step="100"></label><span class="rangeval dvR2v"></span></div>
-    <div class="ix-out"><div class="ix-big dvOut"></div><p class="explain dvN"></p></div></div>
-    <svg class="flowsvg" viewBox="0 0 220 250" aria-label="Divider schematic"><text x="90" y="18" class="svgtxt b dvTV"></text><path d="M80 24 V40" stroke="var(--ink)" stroke-width="2"/><rect x="65" y="40" width="30" height="70" rx="5" class="dvRa" fill="#E8D8B0" stroke="var(--ink)"/><text x="105" y="80" class="svgtxt dvTR1"></text><path d="M80 110 V140" stroke="var(--ink)" stroke-width="2"/><circle cx="80" cy="125" r="5" fill="#C2410C"/><path d="M80 125 H150" stroke="#C2410C" stroke-width="2.5"/><text x="154" y="129" class="svgtxt b dvTO"></text><rect x="65" y="140" width="30" height="70" rx="5" fill="#E8D8B0" stroke="var(--ink)"/><text x="105" y="180" class="svgtxt dvTR2"></text><path d="M80 210 V232 M66 232 H94 M71 238 H89 M76 244 H84" stroke="var(--ink)" stroke-width="2"/></svg></div>`);
-  const fmtR = r => r >= 1000 ? (r / 1000).toFixed(r >= 10000 ? 0 : 1) + " kΩ" : r.toFixed(0) + " Ω";
-  const set = k => { const p = PRE[k]; $(".dvV", el).value = p[0]; $(".dvR1", el).value = p[1]; $(".dvR2", el).value = p[2]; $(".dvLight", el).hidden = k !== "ldr"; $(".dvR1", el).closest(".controls").hidden = k === "ldr"; draw(); };
-  const draw = () => { const k = $(".dvP", el).value, V = +$(".dvV", el).value, R2 = +$(".dvR2", el).value; let R1 = +$(".dvR1", el).value;
-    if (k === "ldr"){ const L = +$(".dvL", el).value; R1 = Math.round(1000000 * Math.pow(10, -L / 100 * 2.2)); $(".dvLv", el).textContent = L + " % → LDR " + fmtR(R1); }
-    const out = V * R2 / (R1 + R2);
-    $(".dvVv", el).textContent = V.toFixed(1) + " V"; $(".dvR1v", el).textContent = fmtR(R1); $(".dvR2v", el).textContent = fmtR(R2);
-    $(".dvOut", el).textContent = "Vₒᵤₜ = " + out.toFixed(2) + " V"; $(".dvTV", el).textContent = V.toFixed(1) + " V"; $(".dvTR1", el).textContent = (k === "ldr" ? "LDR " : "R1 ") + fmtR(R1); $(".dvTR2", el).textContent = "R2 " + fmtR(R2); $(".dvTO", el).textContent = out.toFixed(2) + " V";
-    $(".dvN", el).innerHTML = `${V.toFixed(1)} × ${fmtR(R2)} ÷ (${fmtR(R1)} + ${fmtR(R2)}) = <b>${out.toFixed(2)} V</b>. ` + (out > 3.6 ? `<span style="color:var(--bad)">Too high for a 3.3 V pin.</span>` : out > 3.3 ? "Slightly above 3.3 V: acceptable for most 3.3 V inputs (absolute maximum about 3.6 V), but less margin." : "Safe for a 3.3 V pin.");
-    if (k !== "custom") markAct("dividerLab", "used"); };
-  $(".dvP", el).onchange = e => set(e.target.value); el.querySelectorAll("input").forEach(x => x.oninput = draw); set("echo");
-};
 /* ---- 2.1 pull-up visualizer ---- */
 INTERACTIVES.pullupViz = function(el){
   let mode = "float", pressed = false, raf, hist = [];
@@ -95,11 +56,21 @@ function bbSVG(o){
   const wire = w => { const [x1, y1] = XY(w.from), [x2, y2] = XY(w.to); const dx = Math.abs(x2 - x1), lift = Math.min(28, 8 + dx * .08); const my = Math.min(y1, y2) - lift, mx = (x1 + x2) / 2;
     return `<g class="bb-wire"><path d="M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}" stroke="rgba(0,0,0,.25)" stroke-width="6.5" fill="none" stroke-linecap="round" transform="translate(1.5 2)"/><path d="M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}" stroke="${w.color || "#E8B84A"}" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="${x1}" cy="${y1}" r="3.4" fill="#cfcfcf" stroke="#777"/><circle cx="${x2}" cy="${y2}" r="3.4" fill="#cfcfcf" stroke="#777"/></g>`; };
   const comp = c => {
-    if (c.type === "led"){ const [ax, ay] = bbXY(c.a), [kx, ky] = bbXY(c.k), mx = (ax + kx) / 2, by = Math.min(ay, ky) - 30, col = c.color || "#D62828", dir = Math.sign(kx - ax) || 1;
-      return `<g class="bb-led">${c.lit ? `<circle cx="${mx}" cy="${by}" r="30" fill="${col}" opacity=".28"/><circle cx="${mx}" cy="${by}" r="20" fill="${col}" opacity=".35"/>` : ""}
-       <path d="M${ax} ${ay} L${ax} ${by + 18} L${mx - 4 * dir} ${by + 8}" stroke="#A3A3A3" stroke-width="2.6" fill="none"/><path d="M${kx} ${ky} L${mx + 4 * dir} ${by + 8}" stroke="#A3A3A3" stroke-width="2.6" fill="none"/>
-       <circle cx="${mx}" cy="${by}" r="12" fill="${c.lit ? col : col}" opacity="${c.lit ? 1 : .78}" stroke="rgba(0,0,0,.45)"/><path d="M${mx + 11.2 * dir} ${by - 6} L${mx + 11.2 * dir} ${by + 6}" stroke="rgba(0,0,0,.55)" stroke-width="2.4"/><circle cx="${mx - 4}" cy="${by - 4}" r="3" fill="#fff" opacity=".55"/>
-       <text x="${ax - 7 * dir}" y="${ay - 22}" text-anchor="middle" class="bb-pm">+</text><text x="${kx + 7 * dir}" y="${ky - 22}" text-anchor="middle" class="bb-pm">−</text></g>`; }
+    if (c.type === "led"){ const [ax, ay] = bbXY(c.a), [kx, ky] = bbXY(c.k), col = c.color || "#D62828", same = ax === kx, R = 18;
+      const dir = same ? 1 : (Math.sign(kx - ax) || 1), bx = same ? ax - 40 : (ax + kx) / 2, by = same ? (ay + ky) / 2 : Math.min(ay, ky) - 38;
+      /* legs run from the holes to the underside of the dome; the anode (+) leg is the longer one */
+      const aLeg = same ? `M${ax} ${ay} H${ax - 14} L${bx + R - 2} ${by - 6}` : `M${ax} ${ay} V${by + R + 10} L${bx - 6 * dir} ${by + R - 1}`;
+      const kLeg = same ? `M${kx} ${ky} H${kx - 14} L${bx + R - 2} ${by + 6}` : `M${kx} ${ky} V${by + R + 4} L${bx + 6 * dir} ${by + R - 1}`;
+      const pm = (x, y, t, f) => `<text x="${x}" y="${y}" text-anchor="middle" class="bb-pm" style="fill:${f}">${t}</text>`;
+      return `<g class="bb-led">${c.lit ? `<circle cx="${bx}" cy="${by}" r="44" fill="${col}" opacity=".18"/><circle cx="${bx}" cy="${by}" r="32" fill="${col}" opacity=".28"/>` : ""}
+       <path d="${aLeg}" stroke="#7a7a7a" stroke-width="4.2" fill="none" stroke-linecap="round"/><path d="${aLeg}" stroke="#d8d8d8" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+       <path d="${kLeg}" stroke="#7a7a7a" stroke-width="4.2" fill="none" stroke-linecap="round"/><path d="${kLeg}" stroke="#d8d8d8" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+       <rect x="${bx - R - 2}" y="${by + R - 6}" width="${2 * R + 4}" height="7" rx="2" fill="${col}" opacity=".95" stroke="rgba(0,0,0,.5)"/>
+       <circle cx="${bx}" cy="${by}" r="${R}" fill="${col}" opacity="${c.lit ? 1 : .88}" stroke="rgba(0,0,0,.55)" stroke-width="1.5"/>
+       <path d="M${bx - 7} ${by + 5} L${bx - 3} ${by - 7} L${bx + 3} ${by + 5} M${bx + 8} ${by - 8} L${bx + 8} ${by + 6}" stroke="rgba(0,0,0,.28)" stroke-width="1.6" fill="none"/>
+       <ellipse cx="${bx - 6}" cy="${by - 8}" rx="5" ry="3" fill="#fff" opacity=".6" transform="rotate(-30 ${bx - 6} ${by - 8})"/>
+       ${same ? pm(ax - 22, ay - 5, "+", "#B91C1C") + pm(kx - 22, ky + 15, "−", "#1D4ED8") : pm(ax - 10 * dir, ay - 14, "+", "#B91C1C") + pm(kx + 10 * dir, ky - 14, "−", "#1D4ED8")}
+       <text x="${bx - R - 6}" y="${by + 4}" text-anchor="end" class="bb-tl">LED</text></g>`; }
     if (c.type === "res"){ const [x1, y1] = XY(c.p1), [x2, y2] = XY(c.p2), mx = (x1 + x2) / 2, my = (y1 + y2) / 2, ang = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI, bands = resBands(c.ohms || 220);
       return `<g class="bb-res"><path d="M${x1} ${y1} L${x2} ${y2}" stroke="#A3A3A3" stroke-width="2.4"/><g transform="rotate(${ang} ${mx} ${my})"><rect x="${mx - 16}" y="${my - 6.5}" width="32" height="13" rx="6" fill="#E8D8B0" stroke="#8a6d3b"/>${bands.map((col, k) => `<rect x="${mx - 9 + k * 6}" y="${my - 6.5}" width="3.2" height="13" fill="${col}"/>`).join("")}<rect x="${mx + 9}" y="${my - 6.5}" width="3.2" height="13" fill="#C8A200"/></g>${c.label ? `<text x="${mx + (Math.abs(ang) > 45 ? 22 : 0)}" y="${my - (Math.abs(ang) > 45 ? -4 : 11)}" text-anchor="${Math.abs(ang) > 45 ? "start" : "middle"}" class="bb-tl">${c.label}</text>` : ""}</g>`; }
     if (c.type === "module"){ const P = c.pins.map(p => [bbXY(p[0]), p[1]]), xs = P.map(p => p[0][0]), y = P[0][0][1], x0 = Math.min(...xs) - 18, x1 = Math.max(...xs) + 18, h = c.h || 70, down = c.side !== "up";
@@ -113,9 +84,9 @@ function bbSVG(o){
    ${(o.terms || []).map(t => block(t, false)).join("")}${(o.rterms || []).map(t => block(t, true)).join("")}
    <rect x="0" y="4" width="${W}" height="${Hh - 8}" rx="10" fill="#F3EFE4" stroke="#D8CFB8"/>
    <rect x="0" y="146" width="${W}" height="14" fill="#E4DCC6"/>
-   <path d="M20 9 H${W - 10}" stroke="#D62828" stroke-width="1.5" opacity=".6"/><path d="M20 45 H${W - 10}" stroke="#2563EB" stroke-width="1.5" opacity=".6"/><path d="M20 263 H${W - 10}" stroke="#2563EB" stroke-width="1.5" opacity=".6"/><path d="M20 299 H${W - 10}" stroke="#D62828" stroke-width="1.5" opacity=".6"/>
-   <text x="10" y="22" class="lbl" fill="#D62828">+</text><text x="10" y="40" class="lbl">−</text><text x="10" y="276" class="lbl">−</text><text x="10" y="294" class="lbl" fill="#D62828">+</text>
-   ${o.split ? `<path d="M${(bbXY("a15")[0] + bbXY("a16")[0]) / 2} 6 V48 M${(bbXY("a15")[0] + bbXY("a16")[0]) / 2} 260 V302" stroke="#C2410C" stroke-width="2.4" stroke-dasharray="4 3"/><text x="${(bbXY("a15")[0] + bbXY("a16")[0]) / 2 + 4}" y="58" class="lbl" fill="#C2410C">gap</text>` : ""}
+   ${(() => { const gx = (bbXY("a15")[0] + bbXY("a16")[0]) / 2, rl = (y, col) => o.split ? `<path d="M20 ${y} H${gx - 9}" stroke="${col}" stroke-width="2.4" opacity=".8"/><path d="M${gx + 9} ${y} H${W - 10}" stroke="${col}" stroke-width="2.4" opacity=".8"/>` : `<path d="M20 ${y} H${W - 10}" stroke="${col}" stroke-width="1.6" opacity=".6"/>`;
+     return rl(9, "#D62828") + rl(45, "#2563EB") + rl(263, "#2563EB") + rl(299, "#D62828") + `<text x="10" y="22" class="lbl" fill="#D62828">+</text><text x="10" y="40" class="lbl">−</text><text x="10" y="276" class="lbl">−</text><text x="10" y="294" class="lbl" fill="#D62828">+</text>`
+      + (o.split ? `<g class="bb-break">${[[6, 48], [260, 302]].map(([a, b]) => `<rect x="${gx - 6}" y="${a}" width="12" height="${b - a}" fill="#FFF7ED" stroke="#C2410C" stroke-width="1.6" stroke-dasharray="4 3"/>`).join("")}<text x="${gx}" y="156" text-anchor="middle" class="lbl" fill="#C2410C" font-weight="700">▲ rails break here ▲</text></g>` : ""); })()}
    <g class="strips"></g>${lbl.join("")}
    ${holes.map(h => { const [x, y] = bbXY(h); return `<rect class="hole" data-h="${h}" x="${x - 4}" y="${y - 4}" width="8" height="8" rx="1.5"/>`; }).join("")}
    ${(o.comps || []).filter(c => c.type === "module").map(comp).join("")}<g class="wires">${(o.wires || []).map(wire).join("")}</g>${(o.comps || []).filter(c => c.type !== "module").map(comp).join("")}
@@ -124,54 +95,6 @@ function bbSVG(o){
    ${(o.spots || []).map(sp => { const [x, y] = XY(sp); return `<circle cx="${x}" cy="${y}" r="13" fill="none" stroke="#C2410C" stroke-width="3" class="bb-spot"/>`; }).join("")}
   </svg>`;
 }
-/* ---- 2.2 breadboard explorer ---- */
-INTERACTIVES.bbExplore = function(el){
-  let split = true, quiz = null, score = 0, asked = 0;
-  const QS = [["a5","e5",true],["e5","f5",false],["c7","c8",false],["T+3","T+20",null],["g12","j12",true],["T-2","T-14",true],["b20","h20",false],["B+16","B+29",true]];
-  el.innerHTML = bench("Virtual breadboard: what is connected?", `<div class="controls"><label class="chk"><input type="checkbox" class="bxS" checked><span>This breadboard has split power rails (dashed line)</span></label></div>
-   <div class="bbwrap bxW"></div><div class="ix-out bxOut">Tap any hole.</div>
-   <div class="controls"><button class="btn primary bxQ" type="button">Quiz me: are these two holes connected?</button><span class="bxQs explain"></span></div>`);
-  const draw = () => { $(".bxW", el).innerHTML = bbSVG({split}); el.querySelectorAll(".bxW .hole").forEach(h => h.onclick = () => tap(h.dataset.h)); };
-  const tap = id => { const net = bbNet(id, split); const same = [...el.querySelectorAll(".bxW .hole")].filter(h => bbNet(h.dataset.h, split) === net);
-    el.querySelectorAll(".bxW .hole").forEach(h => h.classList.remove("hl", "sel")); same.forEach(h => h.classList.add("hl")); el.querySelector(`.bxW .hole[data-h="${id}"]`).classList.add("sel");
-    const m = id.match(/^([TB])([+-])(\d+)$/);
-    $(".bxOut", el).innerHTML = m ? `<b>${m[1] === "T" ? "Top" : "Bottom"} ${m[2] === "+" ? "+ (power)" : "− (ground)"} rail.</b> ${split ? `On this breadboard the rail is split: only the ${+m[3] <= 15 ? "left" : "right"} half is connected (${same.length} holes). Bridge the gap with a jumper to join the halves.` : `All ${same.length} holes along this line are connected.`}` : `<b>Hole ${id}.</b> Connected to the ${same.length - 1} other holes ${BB.rows.indexOf(id[0]) < 5 ? "a–e" : "f–j"} in column ${id.slice(1)}. Not connected across the center channel.`;
-    markAct("bbExplore", "used"); if (quiz) answer(id); };
-  const answer = () => {};
-  $(".bxS", el).onchange = e => { split = e.target.checked; draw(); };
-  $(".bxQ", el).onclick = () => { const q = QS[asked % QS.length]; asked++; const truth = q[2] === null ? !split : q[2];
-    $(".bxQs", el).innerHTML = `Are <b>${q[0]}</b> and <b>${q[1]}</b> connected? <button class="btn small bxY" type="button">Yes</button> <button class="btn small bxN" type="button">No</button>`;
-    el.querySelectorAll(".bxW .hole").forEach(h => h.classList.toggle("sel", h.dataset.h === q[0] || h.dataset.h === q[1]));
-    const res = yes => { const ok = yes === truth; if (ok) score++; $(".bxQs", el).innerHTML = `${ok ? "✓ Right." : "✗ Not quite."} ${q[0]} and ${q[1]} are ${truth ? "" : "NOT "}connected. Score ${score}/${asked}.`; tap(q[0]); if (score >= 5) markAct("bbQuiz", "done"); };
-    $(".bxY", el).onclick = () => res(true); $(".bxN", el).onclick = () => res(false); };
-  draw();
-};
-/* ---- 2.2 build an LED circuit ---- */
-INTERACTIVES.bbBuild = function(el){
-  const comps = [{type:"led", a:"e12", k:"e13", color:"#D62828"}, {type:"res", p1:"b13", p2:"T-13", ohms:getBoard() === "uno" ? 470 : 220, label:getBoard() === "uno" ? "470 Ω" : "220 Ω"}];
-  const terms = () => [{id:"PIN", x:-70, y:110, label:(b => b === "uno" ? "D" + pinK(b, "LED_PIN") : b === "s3" ? "GPIO" + pinK(b, "LED_PIN") : pinK(b, "LED_PIN"))(getBoard()), color:"#C2410C"}, {id:"GND", x:-70, y:200, label:"GND", color:"#222"}];
-  let wires = [], pick = null;
-  el.innerHTML = bench("Build: LED + resistor on a breadboard", `<p class="explain">The LED (long leg in e12) and the resistor (b13 to the top − rail) are already placed. Add the wires: tap a board pin on the left, then a hole. Tap a wire's end hole again to remove it.</p>
-   <div class="bbwrap bbW"></div><div class="controls"><button class="btn primary bbChk" type="button">Check circuit</button><button class="btn bbClr" type="button">Clear wires</button></div><ul class="reslist bbOut"></ul>`);
-  const draw = () => { $(".bbW", el).innerHTML = bbSVG({split:false, comps, terms:terms(), wires:wires.map(w => ({from:w[0] === "PIN" || w[0] === "GND" ? termXY(w[0]) : w[0], to:w[1], color:w[0] === "GND" ? "#222" : "#C2410C"}))});
-    el.querySelectorAll(".bbW .hole").forEach(h => h.onclick = () => click(h.dataset.h)); if (pick){ const p = el.querySelector(`.bbW .hole[data-h="${pick}"]`); if (p) p.classList.add("sel"); } };
-  const termXY = id => { const t = terms().find(x => x.id === id); return [t.x + 34, t.y]; };
-  const click = id => { if (id === "PIN" || id === "GND"){ pick = id; draw(); return; }
-    const ex = wires.findIndex(w => w[1] === id); if (ex >= 0 && !pick){ wires.splice(ex, 1); draw(); return; }
-    if (!pick){ toast("Tap a board pin (PIN or GND) first."); return; } wires.push([pick, id]); pick = null; draw(); };
-  $(".bbClr", el).onclick = () => { wires = []; pick = null; draw(); $(".bbOut", el).innerHTML = ""; };
-  $(".bbChk", el).onclick = () => { const net = id => bbNet(id, false); const out = [];
-    const pinW = wires.filter(w => w[0] === "PIN"), gndW = wires.filter(w => w[0] === "GND");
-    const pinOk = pinW.some(w => net(w[1]) === net("e12")), gndOk = gndW.some(w => net(w[1]) === net("T-13"));
-    const short = pinW.some(w => net(w[1]) === net("T-13")) || gndW.some(w => net(w[1]) === net("e12"));
-    if (short) out.push(fail("Short circuit or wrong side!", "The board pin and GND would be connected without the LED in between. Unplug and rewire."));
-    out.push(pinOk ? pass("The board pin reaches the LED's long leg (anode, column 12).") : fail("The board pin is not connected to the LED's long leg.", "Put the pin wire in column 12, rows a–e."));
-    out.push(gndOk ? pass("GND reaches the top − rail, where the resistor ends.") : fail("GND is not connected to the resistor's rail.", "Connect GND to any hole in the top − rail."));
-    out.push(pass("The LED's short leg (column 13) connects through the resistor (b13) to the − rail."));
-    const ok = pinOk && gndOk && !short; $(".bbOut", el).innerHTML = out.map(c => `<li class="${c.ok ? "ok" : "no"}">${c.ok ? "✓" : "✗"} ${c.msg}${!c.ok && c.hint ? `<span class="explain">${c.hint}</span>` : ""}</li>`).join("") + (ok ? `<li class="ok"><b>Complete loop:</b> pin → LED → resistor → GND. Upload P1 and it will blink.</li>` : "");
-    if (ok){ markAct("bbBuild", "pass"); confetti(); } };
-  draw();
-};
 /* ---- 2.2 fault finder: six realistic faults, each drawn as a real breadboard ---- */
 INTERACTIVES.faultFinder = function(el){
   const pinT = (y, lbl) => ({id:"PIN", x:-70, y, label:lbl, color:"#C2410C"}), gndT = y => ({id:"GND", x:-70, y, label:"GND", color:"#222"}), v3T = y => ({id:"V33", x:-70, y, label:"3V3", color:"#D62828"});
@@ -220,19 +143,6 @@ INTERACTIVES.faultFinder = function(el){
     if (!reveal){ $(".ffO", el).innerHTML = f.o.map((o, k) => `<button type="button" data-k="${k}">${esc(o)}</button>`).join(""); $(".ffX", el).hidden = true;
       el.querySelectorAll(".ffO button").forEach(b => b.onclick = () => { const k = +b.dataset.k, ok = k === f.a; b.classList.add(ok ? "ok" : "no"); if (ok){ done.add(i); draw(true); } $(".ffX", el).hidden = false; $(".ffX", el).innerHTML = (ok ? "<b>✓ Correct.</b> " : "<b>✗ Not this one.</b> Look again at the picture. ") + (ok ? f.x : ""); if (done.size === F.length) markAct("faultFinder", "done"); }); } };
   draw();
-};
-/* ---- 2.2 wiring audit rubric ---- */
-INTERACTIVES.wiringAudit = function(el){
-  const C = [["Power and ground","Every part's GND connects to the board's GND; 5 V parts use 5 V and 3.3 V parts use 3.3 V."],["Logic levels","5 V signals into 3.3 V boards go through dividers or level shifters."],["Placement","Chips straddle the channel; no part has two legs in the same strip by mistake."],["Rails","Split rails are bridged where needed; rails are labeled (5 V / 3.3 V)."],["Color code","Red = power, black = GND, other colors for signals, used consistently."],["Neatness","Short, flat wires; nothing loops over chips; nothing loose."],["Modularity","Each sensor and its resistors sit together near their pins."],["Documentation","A wiring table and a top-down photo match the real circuit."]];
-  const K = "sss_audit_" + (user ? user.email : "g"); const S = store.get(K, {});
-  el.innerHTML = bench("Wiring audit rubric (0–2 per row, 16 points)", `<table class="t"><tr><th>Criterion</th><th>Looks for</th><th>Score</th><th>Comment</th></tr>${C.map((c, i) => `<tr><td><b>${c[0]}</b></td><td>${c[1]}</td><td><select class="dinput waS" data-i="${i}"><option value="">–</option><option value="0">0 missing</option><option value="1">1 partly</option><option value="2">2 fully</option></select></td><td><input class="dinput waC" data-i="${i}" placeholder="evidence"></td></tr>`).join("")}</table>
-   <div class="ix-out"><b class="waT">Total: 0 / 16</b> <span class="explain waN"></span></div><div class="controls"><button class="btn small waCopy" type="button">Copy audit as text</button></div>`);
-  el.querySelectorAll(".waS").forEach(s => s.value = (S[s.dataset.i] || [])[0] || ""); el.querySelectorAll(".waC").forEach(s => s.value = (S[s.dataset.i] || [])[1] || "");
-  const upd = () => { el.querySelectorAll(".waS").forEach(s => S[s.dataset.i] = [s.value, el.querySelector(`.waC[data-i="${s.dataset.i}"]`).value]); store.set(K, S);
-    const sc = C.reduce((t, c, i) => t + (+((S[i] || [])[0] || 0)), 0), n = C.filter((c, i) => (S[i] || [])[0] !== "" && (S[i] || [])[0] != null).length; $(".waT", el).textContent = `Total: ${sc} / 16`; $(".waN", el).textContent = n < C.length ? `${C.length - n} rows not scored yet.` : sc >= 12 ? "Ready to power up." : "Fix the rows scored 0 or 1 before powering up."; if (n === C.length) markAct("wiringAudit", String(sc)); };
-  el.querySelectorAll("select, input").forEach(x => x.oninput = x.onchange = upd);
-  $(".waCopy", el).onclick = () => copyText(C.map((c, i) => `${c[0]}: ${(S[i] || [])[0] || "-"}/2 ${(S[i] || [])[1] || ""}`).join("\n") + "\n" + $(".waT", el).textContent);
-  upd();
 };
 /* ---- 2.3 DHT single-wire protocol ---- */
 INTERACTIVES.dhtProtocol = function(el){

@@ -9,9 +9,9 @@ import os, re, json
 SRC = os.path.join(os.path.dirname(__file__), "src")
 JS = ["js/core.js","js/refs.js","js/helpers.js","js/ds_kit.js","js/media.js","js/pins.js","js/programs.js","js/sim.js","js/sim_ext.js","js/programs2.js","js/sandbox.js","js/sb_challenges.js","js/sb_challenges2.js",
       "js/ix_u1.js","js/boards.js","js/ix_u2.js","js/ix_u3.js","js/ix_u1b.js","js/sensor_anim.js","js/mission.js","js/scene_bench.js","js/cloud_ui.js","js/ix_u3b.js","js/u4_code.js","js/ix_u4.js","js/as_sandbox.js","js/web_sandbox.js","js/db_lab.js",
-      "js/ix_new.js","js/ix_ds1.js","js/ix_ds2.js","js/ix_ds3.js","js/ix_ds4.js","content/u1.js","content/u2.js","content/u3.js","content/u4.js","content/u4b.js","content/u4c.js","content/u5.js","content/tail.js","content/tests.js","js/engine.js","js/gate.js","js/assess.js","js/badges.js","js/present.js","js/pages.js"]
+      "js/ix_new.js","js/ix_rev1.js","js/ix_rev2.js","js/ix_rev3.js","js/ix_rev4.js","js/ix_ds1.js","js/ix_ds2.js","js/ix_ds3.js","js/ix_ds4.js","content/u1.js","content/u2.js","content/u3.js","content/u4.js","content/u4b.js","content/u4c.js","content/u5.js","content/tail.js","content/tests.js","js/engine.js","js/gate.js","js/assess.js","js/badges.js","js/present.js","js/pages.js"]
 def rd(p): return open(os.path.join(SRC, p), encoding="utf-8").read()
-css = rd("base.css") + "\n" + rd("b2b.css")
+css = rd("base.css") + "\n" + rd("b2b.css") + "\n" + rd("rev.css")
 ROOT = os.path.dirname(os.path.abspath(__file__))
 api_url = os.environ.get("SSS_API_URL", os.environ.get("B2B_API_URL", "")).strip()
 if not api_url and not os.environ.get("SSS_PREVIEW") and os.path.exists(os.path.join(ROOT, "config.json")):

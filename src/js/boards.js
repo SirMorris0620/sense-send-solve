@@ -183,7 +183,7 @@ function boardSVG(b, opts){
      <rect x="150" y="150" width="120" height="84" rx="4" fill="#c9ced3" stroke="#8d949b"/><text x="210" y="190" text-anchor="middle" font-size="10" fill="#3b4148" font-weight="700">ESP32-S3</text><text x="210" y="205" text-anchor="middle" font-size="9" fill="#3b4148">Wi-Fi module</text>
      <rect x="150" y="262" width="60" height="60" rx="4" fill="#202020"/><text x="180" y="296" text-anchor="middle" font-size="9" fill="#ccc">RA4M1</text>
      <text x="300" y="60" text-anchor="middle" font-size="10" fill="#E0E7FF" font-weight="700">DIGITAL (PWM ~)</text><text x="330" y="372" text-anchor="middle" font-size="10" fill="#E0E7FF" font-weight="700">POWER</text><text x="486" y="372" text-anchor="middle" font-size="10" fill="#E0E7FF" font-weight="700">ANALOG IN</text>
-     <text x="80" y="210" font-size="15" fill="#E0E7FF" font-weight="700">UNO R4 WiFi</text>`; }
+     <text x="16" y="200" font-size="15" fill="#E0E7FF" font-weight="700">UNO R4</text><text x="16" y="218" font-size="15" fill="#E0E7FF" font-weight="700">WiFi</text>`; }
   return `<svg class="boardsvg ${b}" viewBox="${vb}" role="group" aria-label="${esc(BOARDS[b].name)} pins">${body}${P.map(lab).join("")}</svg>`;
 }
 /* ---- 1.3 interactive pin map ---- */
