@@ -1,7 +1,7 @@
 /* ============ BOARD DRAWINGS: real header order, clickable pins (pin map, wiring missions) ============
    Header order from: Espressif ESP32-S3-DevKitC-1 v1.1 user guide (J1/J3 tables); NodeMCU v2 (Amica) / v3 (LoLin) silkscreen;
    Arduino UNO R4 WiFi pinout (power, analog and digital headers). */
-const PIN_T = {pwr:["power","#D62828"], gnd:["ground","#3A3A3A"], adc:["analog input","#7C3AED"], io:["digital I/O","#1F8A70"], i2c:["I²C","#2563EB"], spi:["SPI","#C8653A"], uart:["serial (UART)","#B08A1E"], ctl:["reset / control","#64748B"], boot:["reserved / careful","#9CA3AF"]};
+const PIN_T = {pwr:["power","#D62828"], gnd:["ground","#3A3A3A"], adc:["analog input","#7C3AED"], io:["digital I/O","#4F46E5"], i2c:["I²C","#2563EB"], spi:["SPI","#C2410C"], uart:["serial (UART)","#A16207"], ctl:["reset / control","#64748B"], boot:["reserved / careful","#9CA3AF"]};
 /* [id, label, type, functions, notes] */
 const BOARD_PINS = {
  s3: {L:[
@@ -158,7 +158,7 @@ function boardSVG(b, opts){
   if (b === "s3"){ vb = "-90 0 400 610";
     body = `<rect x="0" y="0" width="220" height="600" rx="10" fill="#1a1d21" stroke="#0b0d10"/>
      <rect x="8" y="64" width="28" height="476" rx="4" fill="#111" /><rect x="184" y="64" width="28" height="476" rx="4" fill="#111"/>
-     <rect x="50" y="10" width="120" height="196" rx="4" fill="#cfd5db" stroke="#9aa3ab"/><rect x="50" y="10" width="120" height="44" rx="3" fill="#2c3e35"/><path d="M60 22 h18 v18 h10 v-18 h10 v18 h10 v-18 h10 v18 h10 v-18 h12" stroke="#d4af37" stroke-width="2.4" fill="none"/>
+     <rect x="50" y="10" width="120" height="196" rx="4" fill="#cfd5db" stroke="#9aa3ab"/><rect x="50" y="10" width="120" height="44" rx="3" fill="#2E3270"/><path d="M60 22 h18 v18 h10 v-18 h10 v18 h10 v-18 h10 v18 h10 v-18 h12" stroke="#d4af37" stroke-width="2.4" fill="none"/>
      <text x="110" y="100" text-anchor="middle" font-size="12" fill="#3b4148" font-weight="700">ESP32-S3</text><text x="110" y="116" text-anchor="middle" font-size="9.5" fill="#3b4148">WROOM-1</text><text x="110" y="180" text-anchor="middle" font-size="8" fill="#5b636b">antenna end ↑</text>
      <rect x="96" y="290" width="28" height="28" rx="4" fill="#f4f4f4" stroke="#999"/><circle cx="110" cy="304" r="7" fill="url(#rgbG)"/><text x="110" y="334" text-anchor="middle" font-size="8" fill="#aab">RGB LED</text>
      <rect x="58" y="480" width="22" height="14" rx="3" fill="#444"/><text x="69" y="508" text-anchor="middle" font-size="8.5" fill="#ccc">BOOT</text><rect x="140" y="480" width="22" height="14" rx="3" fill="#444"/><text x="151" y="508" text-anchor="middle" font-size="8.5" fill="#ccc">RST</text>
@@ -177,13 +177,13 @@ function boardSVG(b, opts){
     body = `<path d="M0 10 Q0 0 10 0 H600 Q610 0 610 10 V350 L590 370 V410 Q590 420 580 420 H10 Q0 420 0 410 Z" fill="#008184" stroke="#00585a"/>
      <rect x="190" y="8" width="208" height="24" rx="3" fill="#1b1b1b"/><rect x="408" y="8" width="168" height="24" rx="3" fill="#1b1b1b"/>
      <rect x="240" y="388" width="168" height="24" rx="3" fill="#1b1b1b"/><rect x="422" y="388" width="128" height="24" rx="3" fill="#1b1b1b"/>
-     <rect x="-8" y="80" width="56" height="44" rx="6" fill="#b8c0c7" stroke="#7d868e"/><text x="20" y="140" text-anchor="middle" font-size="10" fill="#e6f4f4">USB-C</text>
-     <rect x="-8" y="300" width="64" height="62" rx="6" fill="#1b1b1b"/><text x="24" y="378" text-anchor="middle" font-size="10" fill="#e6f4f4">power jack</text>
-     <rect x="370" y="140" width="190" height="130" rx="6" fill="#00686a" stroke="#004c4e"/>${Array.from({length:96}, (_, k) => `<circle cx="${386 + (k % 12) * 15}" cy="${156 + Math.floor(k / 12) * 14}" r="3" fill="#7a1d1d"/>`).join("")}<text x="465" y="290" text-anchor="middle" font-size="10" fill="#e6f4f4">12 × 8 LED matrix</text>
+     <rect x="-8" y="80" width="56" height="44" rx="6" fill="#b8c0c7" stroke="#7d868e"/><text x="20" y="140" text-anchor="middle" font-size="10" fill="#E0E7FF">USB-C</text>
+     <rect x="-8" y="300" width="64" height="62" rx="6" fill="#1b1b1b"/><text x="24" y="378" text-anchor="middle" font-size="10" fill="#E0E7FF">power jack</text>
+     <rect x="370" y="140" width="190" height="130" rx="6" fill="#00686a" stroke="#004c4e"/>${Array.from({length:96}, (_, k) => `<circle cx="${386 + (k % 12) * 15}" cy="${156 + Math.floor(k / 12) * 14}" r="3" fill="#7a1d1d"/>`).join("")}<text x="465" y="290" text-anchor="middle" font-size="10" fill="#E0E7FF">12 × 8 LED matrix</text>
      <rect x="150" y="150" width="120" height="84" rx="4" fill="#c9ced3" stroke="#8d949b"/><text x="210" y="190" text-anchor="middle" font-size="10" fill="#3b4148" font-weight="700">ESP32-S3</text><text x="210" y="205" text-anchor="middle" font-size="9" fill="#3b4148">Wi-Fi module</text>
      <rect x="150" y="262" width="60" height="60" rx="4" fill="#202020"/><text x="180" y="296" text-anchor="middle" font-size="9" fill="#ccc">RA4M1</text>
-     <text x="300" y="60" text-anchor="middle" font-size="10" fill="#e6f4f4" font-weight="700">DIGITAL (PWM ~)</text><text x="330" y="372" text-anchor="middle" font-size="10" fill="#e6f4f4" font-weight="700">POWER</text><text x="486" y="372" text-anchor="middle" font-size="10" fill="#e6f4f4" font-weight="700">ANALOG IN</text>
-     <text x="80" y="210" font-size="15" fill="#e6f4f4" font-weight="700">UNO R4 WiFi</text>`; }
+     <text x="300" y="60" text-anchor="middle" font-size="10" fill="#E0E7FF" font-weight="700">DIGITAL (PWM ~)</text><text x="330" y="372" text-anchor="middle" font-size="10" fill="#E0E7FF" font-weight="700">POWER</text><text x="486" y="372" text-anchor="middle" font-size="10" fill="#E0E7FF" font-weight="700">ANALOG IN</text>
+     <text x="80" y="210" font-size="15" fill="#E0E7FF" font-weight="700">UNO R4 WiFi</text>`; }
   return `<svg class="boardsvg ${b}" viewBox="${vb}" role="group" aria-label="${esc(BOARDS[b].name)} pins">${body}${P.map(lab).join("")}</svg>`;
 }
 /* ---- 1.3 interactive pin map ---- */
@@ -194,7 +194,7 @@ INTERACTIVES.pinMap = function(el){
    <div class="kbdrow pmLeg">${Object.keys(PIN_T).map(k => `<span class="tagpill" style="border-color:${PIN_T[k][1]}"><i class="dotc" style="background:${PIN_T[k][1]}"></i>${PIN_T[k][0]}</span>`).join("")}</div>
    <div class="pm-grid"><div class="pm-board"></div><div class="pm-side"><div class="ix-out pmOut"><b>Tap any pin</b> to see what it does, and whether this course uses it.</div><div class="ix-out pmQz" hidden></div></div></div>
    <p class="explain">Pins are drawn in the real header order, as seen from the top of the board with the USB port(s) ${"at the bottom (ESP boards) or on the left (Uno R4)"}. Always match the labels printed on your own board: board versions differ slightly.</p>`);
-  const draw = () => { const use = courseUse(b); const hl = {}; if (quiz && quiz.done) hl[quiz.ans] = "#8FD1B8";
+  const draw = () => { const use = courseUse(b); const hl = {}; if (quiz && quiz.done) hl[quiz.ans] = "#A5B4FC";
     $(".pm-board", el).innerHTML = boardSVG(b, {sel, onlyCourse:only, hl}); $(".pm-grid", el).classList.toggle("wide", b === "uno");
     el.querySelectorAll(".bpin").forEach(g => { const go = () => tap(g.dataset.pin, +g.dataset.i); g.onclick = go; g.onkeydown = e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); go(); } }; }); };
   const tap = (id, i) => { const p = boardGeom(b).pins[i], use = courseUse(b)[id]; sel = id; seen.add(b + id);

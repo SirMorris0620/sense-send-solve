@@ -71,17 +71,17 @@ function drawPlot(cv, r, cur, b){
   const {g, W, H} = hiDPI(cv); g.clearRect(0, 0, W, H);
   const series = (cur.plot || []).filter(k => r.samples && r.samples.length && r.samples[0][k] != null);
   const T = Math.max(1, r.end || cur.sim), X = t => 34 + t / T * (W - 44);
-  g.font = "10px sans-serif"; g.fillStyle = cssv("--muted") || "#53665D";
-  const cols = {temp:"#C8653A", hum:"#2563EB", light:"#E8B84A", dist:"#1F8A70", gas:"#7C3AED", pm25:"#B91C1C"};
+  g.font = "10px sans-serif"; g.fillStyle = cssv("--muted") || "#475569";
+  const cols = {temp:"#C2410C", hum:"#2563EB", light:"#E8B84A", dist:"#4F46E5", gas:"#7C3AED", pm25:"#B91C1C"};
   const names = {temp:"temp °C", hum:"humidity %", light:"light %", dist:"distance cm", gas:"gas (AO)", pm25:"PM2.5"};
   const plotH = H - (cur.pins ? 34 : 18);
   series.forEach((k, si) => { const vals = r.samples.map(s => s[k]); const lo = Math.min(...vals), hi = Math.max(...vals), pad = (hi - lo) * 0.15 || 1;
     const Y = v => 8 + (1 - (v - lo + pad) / (hi - lo + 2 * pad)) * (plotH - 16);
     g.strokeStyle = cols[k]; g.lineWidth = 2; g.beginPath(); r.samples.forEach((s, i) => { const x = X(s.t), y = Y(s[k]); i ? g.lineTo(x, y) : g.moveTo(x, y); }); g.stroke();
     g.fillStyle = cols[k]; g.fillText(names[k], 38 + si * 90, 12); });
-  (cur.pins || []).forEach((p, pi) => { const pin = typeof p === "function" ? p(b) : p, y = H - 10 - pi * 12; g.fillStyle = cssv("--muted") || "#53665D"; g.fillText(String(pin.label || ""), 2, y + 3);
+  (cur.pins || []).forEach((p, pi) => { const pin = typeof p === "function" ? p(b) : p, y = H - 10 - pi * 12; g.fillStyle = cssv("--muted") || "#475569"; g.fillText(String(pin.label || ""), 2, y + 3);
     const s = segs(r, pin.pin); s.forEach(x => { if (x.v){ g.fillStyle = pin.color || "#E8B84A"; g.fillRect(X(x.start), y - 4, Math.max(1, X(x.end) - X(x.start)), 8); } }); });
-  g.fillStyle = cssv("--muted") || "#53665D"; [0, .25, .5, .75, 1].forEach(f => g.fillText((T * f / 1000).toFixed(0) + "s", X(T * f) - 6, H - 1));
+  g.fillStyle = cssv("--muted") || "#475569"; [0, .25, .5, .75, 1].forEach(f => g.fillText((T * f / 1000).toFixed(0) + "s", X(T * f) - 6, H - 1));
 }
 function drawHW(box, r, cur, b){
   const last = r.samples && r.samples.length ? r.samples[r.samples.length - 1] : {};

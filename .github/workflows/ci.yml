@@ -19,6 +19,8 @@ jobs:
         run: |
           pip install playwright==1.56.0
           python -m playwright install --with-deps chromium
+      - name: Install the Python packages used by the Colab cells
+        run: pip install numpy pandas scikit-learn scipy statsmodels matplotlib
       - name: Run all checks
         run: bash test/run_all.sh
       - name: Keep screenshots if something failed

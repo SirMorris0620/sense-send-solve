@@ -110,8 +110,8 @@ Unit 1 opens after the pre-test. Each later unit opens only after a learner fini
 
 ## 6b. Pre-test, post-test, and certificate
 
-- **Pre-test:** every learner takes it before Module 1.1 (30 questions, about 30 minutes, not graded, one attempt). It measures what they knew at the start. To skip it, set `REQUIRE_PRETEST: false` in the `CONFIG` block of `index.html`.
-- **Post-test:** the same 30 questions, so you can measure learning gain. It opens only after every module is complete. Pass mark `CERT_PASS_PCT` (default 70%), up to `POST_MAX_ATTEMPTS` tries (default 3), best score counts. Answers are reviewed only after passing or after the last attempt.
+- **Pre-test:** every learner takes it before Module 1.1 (34 questions, about 35 minutes, not graded, one attempt). It measures what they knew at the start. To skip it, set `REQUIRE_PRETEST: false` in the `CONFIG` block of `index.html`.
+- **Post-test:** the same 34 questions, so you can measure learning gain. It opens only after every module is complete. Pass mark `CERT_PASS_PCT` (default 70%), up to `POST_MAX_ATTEMPTS` tries (default 3), best score counts. Answers are reviewed only after passing or after the last attempt.
 - **Certificate:** issued only when every core module and at least one IoT-track module are complete and the post-test is passed. The learner confirms the spelling of their name once; the name cannot be changed afterwards. Each certificate has an ID (like `B2B-7F3K-Q9P2`) and a public verification link (`…/#/verify/B2B-7F3K-Q9P2`) that shows only the name, course, and date.
 - **Scoring happens on the server.** `build.py` copies the answer key into `Code.gs` automatically, so if you edit the questions in `src/content/tests.js`, rebuild and paste the new `Code.gs` too.
 - **Admins** are never locked and can take either test anytime (their scores are included in the data; filter them out in your analysis).

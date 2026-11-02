@@ -1,6 +1,6 @@
 /* ============ NEW INTERACTIVES: actuators, calibration, data science, track chooser, git ============ */
 const fmt1 = n => (Math.round(n * 10) / 10).toFixed(1);
-const svgPoly = (ys, w, h, lo, hi, col, sw) => { const n = ys.length; if (!n) return ""; const pts = ys.map((y, i) => `${(i / Math.max(1, n - 1) * w).toFixed(1)},${(h - (Math.min(hi, Math.max(lo, y)) - lo) / (hi - lo || 1) * h).toFixed(1)}`).join(" "); return `<polyline points="${pts}" fill="none" stroke="${col || "#1F8A70"}" stroke-width="${sw || 1.6}" stroke-linejoin="round"/>`; };
+const svgPoly = (ys, w, h, lo, hi, col, sw) => { const n = ys.length; if (!n) return ""; const pts = ys.map((y, i) => `${(i / Math.max(1, n - 1) * w).toFixed(1)},${(h - (Math.min(hi, Math.max(lo, y)) - lo) / (hi - lo || 1) * h).toFixed(1)}`).join(" "); return `<polyline points="${pts}" fill="none" stroke="${col || "#4F46E5"}" stroke-width="${sw || 1.6}" stroke-linejoin="round"/>`; };
 const mkRng = seed => () => (seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296;
 
 /* 2.3 PIR: warm-up, motion, and hold time */
@@ -25,7 +25,7 @@ INTERACTIVES.pirViz = function(el){
 /* 2.4 servo: pulse width to angle */
 INTERACTIVES.servoViz = function(el){
   el.innerHTML = bench("Servo: pulse width sets the angle", `<div class="controls"><label class="sl-in">Pulse width <input type="range" class="svU" min="500" max="2500" value="1500"> <b class="svUv"></b></label></div>
-   <svg class="anim-svg" viewBox="0 0 400 190" role="img" aria-label="Servo arm angle"><rect x="150" y="110" width="100" height="56" rx="8" fill="#2563EB" stroke="#111" stroke-width="2"/><line class="svA" x1="200" y1="110" x2="200" y2="30" stroke="#C8653A" stroke-width="10" stroke-linecap="round"/><circle cx="200" cy="110" r="11" fill="#e5e7eb" stroke="#111" stroke-width="2"/><path d="M60 110 H340" stroke="#cbd5e1" stroke-dasharray="4 4"/><text x="50" y="106" class="svgtxt">0°</text><text x="338" y="106" class="svgtxt">180°</text></svg>
+   <svg class="anim-svg" viewBox="0 0 400 190" role="img" aria-label="Servo arm angle"><rect x="150" y="110" width="100" height="56" rx="8" fill="#2563EB" stroke="#111" stroke-width="2"/><line class="svA" x1="200" y1="110" x2="200" y2="30" stroke="#C2410C" stroke-width="10" stroke-linecap="round"/><circle cx="200" cy="110" r="11" fill="#e5e7eb" stroke="#111" stroke-width="2"/><path d="M60 110 H340" stroke="#cbd5e1" stroke-dasharray="4 4"/><text x="50" y="106" class="svgtxt">0°</text><text x="338" y="106" class="svgtxt">180°</text></svg>
    <p class="ix-out svO"></p><p class="explain">A pulse every 20 ms: about 1 ms is 0°, 1.5 ms is 90°, and 2 ms is 180° (many servos use 544–2400 µs, as the Servo library does). Your code only writes the angle.</p>`);
   const draw = () => { const us = +$(".svU", el).value, a = Math.max(0, Math.min(180, (us - 544) / (2400 - 544) * 180)), r = a * Math.PI / 180;
     $(".svA", el).setAttribute("x2", 200 - Math.cos(r) * 82); $(".svA", el).setAttribute("y2", 110 - Math.sin(r) * 82); $(".svUv", el).textContent = us + " µs";
@@ -37,7 +37,7 @@ INTERACTIVES.servoViz = function(el){
 INTERACTIVES.hbridgeViz = function(el){
   let raf = 0, ang = 0, spd = 0, dir = 0;
   el.innerHTML = bench("H-bridge driver: direction and speed", `<div class="controls"><label>IN1 <select class="dinput hbA"><option>0</option><option>1</option></select></label><label>IN2 <select class="dinput hbB"><option>0</option><option>1</option></select></label><label class="sl-in">Enable (PWM) <input type="range" class="hbE" min="0" max="255" value="200"> <b class="hbEv">200</b></label></div>
-   <svg class="anim-svg" viewBox="0 0 300 150" role="img" aria-label="Motor"><g class="hbM" transform="translate(150 75)"><circle r="46" fill="#e5e7eb" stroke="#111" stroke-width="2"/>${[0, 120, 240].map(k => `<path d="M0 0 L-14 -42 Q0 -50 14 -42 Z" fill="#1F8A70" transform="rotate(${k})"/>`).join("")}<circle r="6" fill="#111"/></g></svg>
+   <svg class="anim-svg" viewBox="0 0 300 150" role="img" aria-label="Motor"><g class="hbM" transform="translate(150 75)"><circle r="46" fill="#e5e7eb" stroke="#111" stroke-width="2"/>${[0, 120, 240].map(k => `<path d="M0 0 L-14 -42 Q0 -50 14 -42 Z" fill="#4F46E5" transform="rotate(${k})"/>`).join("")}<circle r="6" fill="#111"/></g></svg>
    <p class="ix-out hbO"></p><p class="explain">IN1 HIGH and IN2 LOW is forward; swap them for reverse; both LOW stops the motor. The enable pin takes a PWM value 0–255 for speed. A driver module also protects the board from the motor's voltage spikes.</p>`);
   const draw = () => { const a = +$(".hbA", el).value, b = +$(".hbB", el).value, e = +$(".hbE", el).value; dir = a && !b ? 1 : b && !a ? -1 : 0; spd = dir ? e / 255 : 0; $(".hbEv", el).textContent = e;
     $(".hbO", el).innerHTML = dir === 0 ? `<b>Stopped</b> (${a === b ? "both inputs equal" : ""})` : `<b>${dir > 0 ? "Forward" : "Reverse"}</b> at ${Math.round(spd * 100)} % power. Code: <code>digitalWrite(IN1, ${a}); digitalWrite(IN2, ${b}); analogWrite(EN, ${e});</code>`; markAct("hbridgeViz", "used"); };
@@ -51,7 +51,7 @@ INTERACTIVES.tmp36Lab = function(el){
    <p class="explain">Sensor voltage = 0.5 V + 0.01 V × °C. The ADC turns that voltage into a number between 0 and its maximum. To go back you must use the same reference voltage. A TMP36 on a bare ESP8266 ADC (0–1 V) needs a divider; the NodeMCU's A0 pin already scales 0–3.3 V.</p>`);
   const draw = () => { const b = $(".tlB", el).value, T = +$(".tlT", el).value, vref = b === "uno" ? 5 : 3.3, max = BOARDS[b].adcMax, wrong = $(".tlW", el).checked;
     const V = 0.5 + T / 100, raw = Math.round(Math.max(0, Math.min(1, V / vref)) * max), vUsed = wrong ? (vref === 5 ? 3.3 : 5) : vref, Vback = raw * vUsed / max, Tback = (Vback - 0.5) * 100;
-    $(".tlTv", el).textContent = T + " °C"; $(".tlO", el).innerHTML = `<div class="kv"><span>Sensor voltage</span><b>${V.toFixed(3)} V</b><span>ADC reading (0–${max})</span><b>${raw}</b><span>Your code uses Vref</span><b>${vUsed} V ${wrong ? "(wrong!)" : ""}</b><span>Calculated temperature</span><b style="color:${Math.abs(Tback - T) > 1 ? "#B91C1C" : "#1F8A70"}">${fmt1(Tback)} °C</b></div>${V > vref ? '<p class="err">This voltage is above the ADC range: the reading is clipped.</p>' : ""}`; markAct("tmp36Lab", "used"); };
+    $(".tlTv", el).textContent = T + " °C"; $(".tlO", el).innerHTML = `<div class="kv"><span>Sensor voltage</span><b>${V.toFixed(3)} V</b><span>ADC reading (0–${max})</span><b>${raw}</b><span>Your code uses Vref</span><b>${vUsed} V ${wrong ? "(wrong!)" : ""}</b><span>Calculated temperature</span><b style="color:${Math.abs(Tback - T) > 1 ? "#B91C1C" : "#4F46E5"}">${fmt1(Tback)} °C</b></div>${V > vref ? '<p class="err">This voltage is above the ADC range: the reading is clipped.</p>' : ""}`; markAct("tmp36Lab", "used"); };
   el.querySelectorAll("select,input").forEach(x => x.oninput = draw); draw();
 };
 
@@ -63,7 +63,7 @@ INTERACTIVES.powerBudget = function(el){
    <div class="controls"><label>Supply <select class="dinput pbS"><option value="500">Computer USB port (500 mA)</option><option value="1000">5 V 1 A adapter</option><option value="2000">5 V 2 A adapter</option></select></label></div><div class="meter"><i class="pbM" style="width:0"></i></div><p class="ix-out pbO"></p>
    <p class="explain">Numbers are typical worst cases for planning, not measurements: read your parts' data sheets. Wi-Fi sending bursts can reach 250 mA or more.</p>`);
   const draw = () => { const sum = P.reduce((a, p, i) => a + (st[i] ? p[1] : 0), 0), cap = +$(".pbS", el).value, pct = Math.min(100, sum / cap * 100);
-    $(".pbM", el).style.width = pct + "%"; $(".pbM", el).style.background = sum > cap ? "#B91C1C" : sum > cap * .8 ? "#B45309" : "#1F8A70";
+    $(".pbM", el).style.width = pct + "%"; $(".pbM", el).style.background = sum > cap ? "#B91C1C" : sum > cap * .8 ? "#B45309" : "#4F46E5";
     $(".pbO", el).innerHTML = `<b>${sum} mA</b> of ${cap} mA (${Math.round(sum / cap * 100)} %). ${sum > cap ? "<b>Too much.</b> Use a bigger supply, or power the motor/servo separately and share GND." : sum > cap * .8 ? "Close to the limit: leave a 20 % margin." : "Fits with room to spare."}`; };
   el.querySelectorAll("input[type=checkbox]").forEach(c => c.onchange = () => { st[c.dataset.i] = c.checked; store.set(key, st); draw(); markAct("powerBudget", "used"); }); $(".pbS", el).onchange = draw; draw();
 };
@@ -84,7 +84,7 @@ INTERACTIVES.signalLab = function(el){
    <p class="explain">Grey is the raw signal with noise and four spikes. Green is filtered. The median removes spikes without smearing the edges; the average smooths jitter but spreads spikes.</p>`);
   const filt = (a, w, f) => a.map((_, i) => { const s = a.slice(Math.max(0, i - (w >> 1)), i + (w >> 1) + 1).sort((x, y) => x - y); return f === "median" ? s[s.length >> 1] : s.reduce((p, c) => p + c, 0) / s.length; });
   const draw = () => { const f = $(".sgF", el).value, w = +$(".sgW", el).value; $(".sgWv", el).textContent = w; $(".sgR", el).innerHTML = svgPoly(raw, 480, 160, 10, 40, "#9ca3af", 1.2);
-    const out = f === "none" ? raw : filt(raw, w, f); $(".sgG", el).innerHTML = f === "none" ? "" : svgPoly(out, 480, 160, 10, 40, "#1F8A70", 2); const mx = Math.max(...out) - 28;
+    const out = f === "none" ? raw : filt(raw, w, f); $(".sgG", el).innerHTML = f === "none" ? "" : svgPoly(out, 480, 160, 10, 40, "#4F46E5", 2); const mx = Math.max(...out) - 28;
     $(".sgO", el).textContent = f === "none" ? "Raw: spikes reach about " + fmt1(Math.max(...raw)) + " °C." : `Largest value after ${f} filter (window ${w}): ${fmt1(Math.max(...out))} °C.`; markAct("signalLab", "used"); };
   el.querySelectorAll("select,input").forEach(x => x.oninput = draw); draw();
 };
@@ -116,8 +116,8 @@ INTERACTIVES.samplingLab = function(el){
    <p class="explain">The grey curve is a real day. Dots are your samples. A fair plan covers the whole cycle.</p>`);
   const draw = () => { const p = $(".saP", el).value, n = +$(".saN", el).value; $(".saNv", el).textContent = n >= 60 ? (n / 60).toFixed(n % 60 ? 1 : 0) + " h" : n + " min";
     const idx = p === "sys" ? Array.from({length: Math.floor(1440 / n)}, (_, i) => Math.round(i * n / 5)).filter(i => i < 288) : [180, 181, 182]; const vals = idx.map(i => day(i / 12)), mean = vals.reduce((a, b) => a + b, 0) / vals.length;
-    $(".saD", el).innerHTML = idx.map(i => `<circle cx="${(i / 287 * 480).toFixed(1)}" cy="${(140 - (day(i / 12) - 21) / 12 * 140).toFixed(1)}" r="4" fill="#C8653A"/>`).join("");
-    $(".saO", el).innerHTML = `<div class="kv"><span>True daily mean</span><b>${fmt1(truth)} °C</b><span>Your estimate (${vals.length} samples)</span><b>${fmt1(mean)} °C</b><span>Error</span><b style="color:${Math.abs(mean - truth) > .5 ? "#B91C1C" : "#1F8A70"}">${fmt1(mean - truth)} °C</b></div>`; markAct("samplingLab", "used"); };
+    $(".saD", el).innerHTML = idx.map(i => `<circle cx="${(i / 287 * 480).toFixed(1)}" cy="${(140 - (day(i / 12) - 21) / 12 * 140).toFixed(1)}" r="4" fill="#C2410C"/>`).join("");
+    $(".saO", el).innerHTML = `<div class="kv"><span>True daily mean</span><b>${fmt1(truth)} °C</b><span>Your estimate (${vals.length} samples)</span><b>${fmt1(mean)} °C</b><span>Error</span><b style="color:${Math.abs(mean - truth) > .5 ? "#B91C1C" : "#4F46E5"}">${fmt1(mean - truth)} °C</b></div>`; markAct("samplingLab", "used"); };
   el.querySelectorAll("select,input").forEach(x => x.oninput = draw); draw();
 };
 
@@ -127,7 +127,7 @@ INTERACTIVES.statsLab = function(el){
   el.innerHTML = bench("Mean, median, spread, and outliers", `<div class="controls"><button class="btn stA" type="button">Add a spike (+8 °C)</button><button class="btn stB" type="button">Add a dip (−8 °C)</button><button class="btn stR" type="button">Reset</button></div><svg viewBox="0 0 480 90" class="chartsvg stS"></svg><div class="ix-out stO"></div>`);
   const q = (a, p) => { const s = a.slice().sort((x, y) => x - y), i = (s.length - 1) * p, lo = Math.floor(i); return s[lo] + (s[Math.ceil(i)] - s[lo]) * (i - lo); };
   const draw = () => { const n = v.length, mean = v.reduce((a, b) => a + b, 0) / n, sd = Math.sqrt(v.reduce((a, b) => a + (b - mean) ** 2, 0) / (n - 1)), q1 = q(v, .25), q3 = q(v, .75), iqr = q3 - q1, lo = q1 - 1.5 * iqr, hi = q3 + 1.5 * iqr, out = v.filter(x => x < lo || x > hi), mn = Math.min(...v, 20), mx = Math.max(...v, 36);
-    $(".stS", el).innerHTML = `<line x1="10" y1="60" x2="470" y2="60" stroke="#94a3b8"/>${v.map((x, i) => `<circle cx="${10 + (x - mn) / (mx - mn) * 460}" cy="${60 - (i % 5) * 9}" r="5" fill="${x < lo || x > hi ? "#B91C1C" : "#1F8A70"}"/>`).join("")}<line x1="${10 + (mean - mn) / (mx - mn) * 460}" y1="8" x2="${10 + (mean - mn) / (mx - mn) * 460}" y2="68" stroke="#C8653A" stroke-width="2"/><text x="${10 + (mean - mn) / (mx - mn) * 460 + 4}" y="14" class="svgtxt">mean</text>`;
+    $(".stS", el).innerHTML = `<line x1="10" y1="60" x2="470" y2="60" stroke="#94a3b8"/>${v.map((x, i) => `<circle cx="${10 + (x - mn) / (mx - mn) * 460}" cy="${60 - (i % 5) * 9}" r="5" fill="${x < lo || x > hi ? "#B91C1C" : "#4F46E5"}"/>`).join("")}<line x1="${10 + (mean - mn) / (mx - mn) * 460}" y1="8" x2="${10 + (mean - mn) / (mx - mn) * 460}" y2="68" stroke="#C2410C" stroke-width="2"/><text x="${10 + (mean - mn) / (mx - mn) * 460 + 4}" y="14" class="svgtxt">mean</text>`;
     $(".stO", el).innerHTML = `<div class="kv"><span>n</span><b>${n}</b><span>Mean</span><b>${fmt1(mean)}</b><span>Median</span><b>${fmt1(q(v, .5))}</b><span>Std. deviation</span><b>${sd.toFixed(2)}</b><span>Q1, Q3, IQR</span><b>${fmt1(q1)}, ${fmt1(q3)}, ${iqr.toFixed(2)}</b><span>Outlier fences</span><b>${fmt1(lo)} to ${fmt1(hi)}</b><span>Outliers (red)</span><b>${out.length}</b></div><p class="explain">Watch how one spike moves the mean and the standard deviation much more than the median.</p>`; markAct("statsLab", "used"); };
   $(".stA", el).onclick = () => { v.push(35.5); draw(); }; $(".stB", el).onclick = () => { v.push(19.5); draw(); }; $(".stR", el).onclick = () => { v = v.slice(0, 15); draw(); }; draw();
 };
@@ -139,7 +139,7 @@ INTERACTIVES.corrLab = function(el){
   const draw = () => { const s = +$(".crS", el).value / 100, nz = +$(".crN", el).value / 100, r = mkRng(11), xs = Array.from({length: 40}, (_, i) => i / 39), ys = xs.map(x => .5 + s * (x - .5) + (r() - .5) * nz * 1.6), n = 40, mx = xs.reduce((a, b) => a + b) / n, my = ys.reduce((a, b) => a + b) / n;
     const sxy = xs.reduce((a, x, i) => a + (x - mx) * (ys[i] - my), 0), sxx = xs.reduce((a, x) => a + (x - mx) ** 2, 0), syy = ys.reduce((a, y) => a + (y - my) ** 2, 0), cr = sxy / Math.sqrt(sxx * syy), m = sxy / sxx, b = my - m * mx;
     const X = x => 10 + x * 300, Y = y => 190 - Math.min(1.2, Math.max(-.2, y)) / 1.4 * 180 - 25;
-    $(".crC", el).innerHTML = `<rect width="320" height="200" fill="#fff"/>${xs.map((x, i) => `<circle cx="${X(x)}" cy="${Y(ys[i])}" r="3.5" fill="#1F8A70" opacity=".8"/>`).join("")}<line x1="${X(0)}" y1="${Y(b)}" x2="${X(1)}" y2="${Y(m + b)}" stroke="#C8653A" stroke-width="2"/>`;
+    $(".crC", el).innerHTML = `<rect width="320" height="200" fill="#fff"/>${xs.map((x, i) => `<circle cx="${X(x)}" cy="${Y(ys[i])}" r="3.5" fill="#4F46E5" opacity=".8"/>`).join("")}<line x1="${X(0)}" y1="${Y(b)}" x2="${X(1)}" y2="${Y(m + b)}" stroke="#C2410C" stroke-width="2"/>`;
     $(".crSv", el).textContent = s.toFixed(2); $(".crNv", el).textContent = nz.toFixed(2); $(".crO", el).innerHTML = `<div class="kv"><span>Correlation r</span><b>${cr.toFixed(2)}</b><span>Line slope</span><b>${m.toFixed(2)}</b></div>`; markAct("corrLab", "used"); };
   el.querySelectorAll("input").forEach(x => x.oninput = draw); draw();
 };

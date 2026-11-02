@@ -2,7 +2,7 @@
    Each connection: [part pin, board pin label, wire color, note]. "uses" lists the board resources (for conflict checks).
    "k" = constants used in code (name -> value as written in C++). Pins are distinct on every board, except where a board
    has too few pins (ESP8266): there the Pin Planner shows the conflict, which is the lesson. */
-const WIRE = {pwr:"#D62828", gnd:"#222", sig:"#E8B84A", sig2:"#1F8A70", sig3:"#2563EB", sig4:"#C8653A", sig5:"#7C3AED"};
+const WIRE = {pwr:"#D62828", gnd:"#222", sig:"#E8B84A", sig2:"#4F46E5", sig3:"#2563EB", sig4:"#C2410C", sig5:"#7C3AED"};
 const rail = b => b === "uno" ? "5V" : "3V3";
 /* one-pin-in, one-pin-out parts share this builder: pins = {s3, esp8266, uno} */
 function simplePart(name, pins, opt){

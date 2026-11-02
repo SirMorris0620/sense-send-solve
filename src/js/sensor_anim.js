@@ -17,7 +17,7 @@ INTERACTIVES.dhtInside = function(el){
     <path d="M178 115 H200 V210 M250 160 V196" stroke="#9aa" stroke-width="2" fill="none"/>
     <g class="diMol"></g>
     <path d="M296 220 H560" stroke="#E8B84A" stroke-width="4"/><text x="430" y="210" text-anchor="middle" class="an-l">DATA wire (one wire, both directions)</text><g class="diPkt"></g>
-    <rect x="560" y="170" width="170" height="100" rx="12" fill="#17483B"/><text x="645" y="196" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">your board</text><text class="diRead" x="645" y="226" text-anchor="middle" fill="#8FD1B8" font-size="14" font-family="JetBrains Mono,monospace"></text><text class="diRead2" x="645" y="248" text-anchor="middle" fill="#8FD1B8" font-size="14" font-family="JetBrains Mono,monospace"></text>
+    <rect x="560" y="170" width="170" height="100" rx="12" fill="#3730A3"/><text x="645" y="196" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">your board</text><text class="diRead" x="645" y="226" text-anchor="middle" fill="#A5B4FC" font-size="14" font-family="JetBrains Mono,monospace"></text><text class="diRead2" x="645" y="248" text-anchor="middle" fill="#A5B4FC" font-size="14" font-family="JetBrains Mono,monospace"></text>
     <g transform="translate(360 30)"><text class="an-l b" x="0" y="0">What the chip measures</text><text class="diM1 an-v" x="0" y="26"></text><text class="diM2 an-v" x="0" y="50"></text><text class="diM3 an-l" x="0" y="74"></text></g>
    </svg><p class="explain diE"></p>`);
   const comb = () => { let d = ""; for (let i = 0; i < 6; i++){ d += `M${66 + i * 20} 92 v40 M${76 + i * 20} 138 v-40 `; } return `<path d="M62 90 H180 M62 140 H180 ${d}" stroke="#c48a2c" stroke-width="2.4" fill="none"/>`; };
@@ -61,14 +61,14 @@ INTERACTIVES.sonarViz = function(el){
     ${["VCC","Trig","Echo","Gnd"].map((p, k) => `<rect x="${32 + k * 30}" y="190" width="6" height="22" fill="#d4d4d4"/><text x="${35 + k * 30}" y="224" text-anchor="middle" class="an-l">${p}</text>`).join("")}
     
     <g class="svWaves"></g><g class="svObj"></g><line x1="170" y1="250" x2="770" y2="250" class="an-axis"/><g class="svRuler"></g>
-    <g transform="translate(0 266)"><text x="10" y="12" class="an-l b">TRIG</text><path class="svTrig" d="" stroke="#E8B84A" stroke-width="2.4" fill="none"/><text x="10" y="40" class="an-l b">ECHO</text><path class="svEcho" d="" stroke="#1F8A70" stroke-width="2.4" fill="none"/><text class="svEt an-l" x="0" y="58"></text></g>
+    <g transform="translate(0 266)"><text x="10" y="12" class="an-l b">TRIG</text><path class="svTrig" d="" stroke="#E8B84A" stroke-width="2.4" fill="none"/><text x="10" y="40" class="an-l b">ECHO</text><path class="svEcho" d="" stroke="#4F46E5" stroke-width="2.4" fill="none"/><text class="svEt an-l" x="0" y="58"></text></g>
    </svg>
    <div class="ix-grid2"><div class="ix-out svOut"></div><div class="ix-out svErr"></div></div><p class="explain">Time on screen is slowed down about 10,000 times. A real ping at 1 m takes about 6 ms. <b>T</b> is the transmitter (it sends); <b>R</b> is the receiver (it listens).</p>`);
   const X0 = 170, X1 = 770, xOf = cm => X0 + Math.min(cm, 450) / 450 * (X1 - X0 - 40);
   const echoUs = () => 2 * d / 100 / v() * 1e6;
   const hasEcho = () => mat === "hard" && d <= 400 && d >= 2;
   const drawStatic = () => { const x = xOf(d);
-    $(".svObj", el).innerHTML = mat === "angled" ? `<path d="M${x} 50 L${x + 50} 230" stroke="#C8653A" stroke-width="14" stroke-linecap="round"/>` : `<rect x="${x}" y="50" width="16" height="180" rx="4" fill="${mat === "soft" ? "#b5838d" : "#C8653A"}"/>${mat === "soft" ? Array.from({length:8}, (_, k) => `<circle cx="${x + 8}" cy="${62 + k * 22}" r="6" fill="#e5989b"/>`).join("") : ""}`;
+    $(".svObj", el).innerHTML = mat === "angled" ? `<path d="M${x} 50 L${x + 50} 230" stroke="#C2410C" stroke-width="14" stroke-linecap="round"/>` : `<rect x="${x}" y="50" width="16" height="180" rx="4" fill="${mat === "soft" ? "#b5838d" : "#C2410C"}"/>${mat === "soft" ? Array.from({length:8}, (_, k) => `<circle cx="${x + 8}" cy="${62 + k * 22}" r="6" fill="#e5989b"/>`).join("") : ""}`;
     $(".svRuler", el).innerHTML = [0, 100, 200, 300, 400].map(c => `<path d="M${xOf(c)} 245 v10" class="an-axis"/><text x="${xOf(c)}" y="243" text-anchor="middle" class="an-l">${c} cm</text>`).join("");
     const us = echoUs(), cm343 = us * 0.0343 / 2;
     $(".svOut", el).innerHTML = `<div class="kv"><span>Speed of sound at ${T} °C</span><b>${v().toFixed(1)} m/s</b><span>Echo time (there and back)</span><b>${hasEcho() ? us.toFixed(0) + " µs" : "no echo"}</b><span>distance = time × 0.0343 ÷ 2</span><b>${hasEcho() ? cm343.toFixed(1) + " cm" : "pulseIn() returns 0"}</b></div>`;
@@ -86,7 +86,7 @@ INTERACTIVES.sonarViz = function(el){
     for (let k = 0; k < 8; k++){ const start = trigMs + k * (burstMs / 8); const age = ms - start; if (age < 0) continue;
       const out = age < travelMs, f = out ? age / travelMs : (age - travelMs) / travelMs;
       if (out){ const px = sx + (x - sx) * f; w += `<path d="M${px} ${121 - 40 - f * 30} Q${px + 14} 121 ${px} ${121 + 40 + f * 30}" stroke="#E8B84A" stroke-width="2.4" fill="none" opacity="${.9 - k * .07}"/>`; }
-      else if (mat === "hard" && f <= 1){ if (d <= 400){ const px = x - (x - sx) * f, op = Math.max(.15, (1 - d / 500)) * (.9 - k * .07); w += `<path d="M${px} ${150 - 40 - (1 - f) * 30} Q${px - 14} 150 ${px} ${150 + 40 + (1 - f) * 30}" stroke="#1F8A70" stroke-width="2.4" fill="none" opacity="${op}"/>`; } }
+      else if (mat === "hard" && f <= 1){ if (d <= 400){ const px = x - (x - sx) * f, op = Math.max(.15, (1 - d / 500)) * (.9 - k * .07); w += `<path d="M${px} ${150 - 40 - (1 - f) * 30} Q${px - 14} 150 ${px} ${150 + 40 + (1 - f) * 30}" stroke="#4F46E5" stroke-width="2.4" fill="none" opacity="${op}"/>`; } }
       else if (mat === "angled" && f <= 1){ w += `<path d="M${x} ${121 + f * 120} q12 -8 24 0" stroke="#E8B84A" stroke-width="2.4" fill="none" opacity="${.6 - f * .5}"/>`; } }
     $(".svWaves", el).innerHTML = w;
     $(".svTx", el).setAttribute("transform", ms > trigMs && ms < trigMs + burstMs ? `translate(${Math.sin(ms) * 1.5} 0)` : "");

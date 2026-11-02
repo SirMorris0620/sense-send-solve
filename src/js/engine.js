@@ -22,7 +22,7 @@ function confetti(){
   if (reduceMotion()) return;
   let cv = $("#confetti"); if (!cv){ cv = document.createElement("canvas"); cv.id = "confetti"; document.body.appendChild(cv); }
   const g = cv.getContext("2d"); cv.width = innerWidth; cv.height = innerHeight;
-  const cols = ["#1F8A70","#E8B84A","#C8653A","#17483B","#8FD1B8"];
+  const cols = ["#4F46E5","#E8B84A","#C2410C","#3730A3","#A5B4FC"];
   const P = Array.from({length:140}, () => ({x:innerWidth/2, y:innerHeight*0.35, vx:(Math.random()-0.5)*14, vy:-Math.random()*13-4, r:Math.random()*6+3, c:cols[Math.random()*5|0], a:Math.random()*6, va:(Math.random()-0.5)*0.3}));
   const t0 = performance.now();
   (function f(now){ const dt = (now - t0)/1000; g.clearRect(0,0,cv.width,cv.height);

@@ -33,7 +33,7 @@ const WEB = {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   body { font-family: system-ui, sans-serif; margin: 1rem; }
-  .card { background: #E5EFEA; padding: 1rem; border-radius: 12px; max-width: 14rem; }
+  .card { background: #E0E7FF; padding: 1rem; border-radius: 12px; max-width: 14rem; }
   .card b { display: block; font-size: 2rem; }
 </style>
 </head>
@@ -49,7 +49,7 @@ const WEB = {
  c.push(h && /classroom dashboard/i.test(h.textContent) ? {ok:true, msg:"The h1 heading is there."} : {ok:false, msg:"No h1 with \\u201cClassroom Dashboard\\u201d.", hint:"<h1>Classroom Dashboard</h1>"});
  c.push(card && t && card.contains(t) && /29\\.4/.test(t.textContent) ? {ok:true, msg:".card contains #temp with 29.4."} : {ok:false, msg:"No .card containing #temp with 29.4.", hint:"<div class=\\"card\\">Temperature <b id=\\"temp\\">29.4 \\u00b0C</b></div>"});
  if (card){ const s = getComputedStyle(card); const bg = s.backgroundColor !== "rgba(0, 0, 0, 0)" && s.backgroundColor !== "transparent", pad = parseFloat(s.paddingTop) > 0, rad = parseFloat(s.borderTopLeftRadius) > 0;
-  c.push(bg && pad && rad ? {ok:true, msg:"The card has a background, padding, and rounded corners."} : {ok:false, msg:"The card is missing " + [!bg && "a background", !pad && "padding", !rad && "rounded corners"].filter(Boolean).join(", ") + ".", hint:".card { background: #E5EFEA; padding: 1rem; border-radius: 12px; }"}); }
+  c.push(bg && pad && rad ? {ok:true, msg:"The card has a background, padding, and rounded corners."} : {ok:false, msg:"The card is missing " + [!bg && "a background", !pad && "padding", !rad && "rounded corners"].filter(Boolean).join(", ") + ".", hint:".card { background: #E0E7FF; padding: 1rem; border-radius: 12px; }"}); }
  return c;`},
  web_js: {id:"web_js", title:"Fill the page with JavaScript", task:"The <code>readings</code> array holds the latest data. With JavaScript, put the <b>newest</b> temperature in <code>#temp</code> and humidity in <code>#hum</code>, write the time in <code>#updated</code>, and add the class <code>hot</code> to <code>#tempCard</code> when the temperature is above 31 \u00b0C.", criteria:["#temp and #hum show the newest values","#updated shows a time","#tempCard gets the class hot"],
   starter:`<!DOCTYPE html>
@@ -59,9 +59,9 @@ const WEB = {
 <style>
   body { font-family: system-ui, sans-serif; margin: 1rem; }
   .cards { display: flex; gap: .75rem; flex-wrap: wrap; }
-  .card { flex: 1 1 9rem; background: #E5EFEA; padding: .75rem; border-radius: 12px; }
+  .card { flex: 1 1 9rem; background: #E0E7FF; padding: .75rem; border-radius: 12px; }
   .card b { display: block; font-size: 1.8rem; }
-  .card.hot { background: #FDE2D8; outline: 3px solid #C8653A; }
+  .card.hot { background: #FDE2D8; outline: 3px solid #C2410C; }
 </style>
 </head>
 <body>
@@ -95,7 +95,7 @@ const readings = [
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
   body { font-family: system-ui, sans-serif; margin: 1rem; }
-  .card { background: #E5EFEA; padding: .75rem; border-radius: 12px; display: inline-block; }
+  .card { background: #E0E7FF; padding: .75rem; border-radius: 12px; display: inline-block; }
   .card b { display: block; font-size: 1.8rem; }
   table { border-collapse: collapse; margin-top: 1rem; } td, th { border: 1px solid #ccc; padding: 4px 8px; }
 </style>

@@ -1,0 +1,6 @@
+metric,value,unit,interpretation
+mean_temp_c,26.99,deg C,Typical daytime temperature
+heat_index_max_c,36.3,deg C,Peak how-hot-it-feels
+rows_repaired,3.0,rows,Data quality
+gas_anomalies,12.0,readings,Review these times
+ultrasonic_rmse_cm,0.64,cm,Filtered distance error

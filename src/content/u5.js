@@ -6,11 +6,11 @@ const DASH_STATIC = `<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My IoT Dashboard</title>
 <style>
-  body { font-family: system-ui, sans-serif; margin: 0; background: #f5f7f4; color: #13241f; }
-  header { background: #17483b; color: #fff; padding: 14px 16px; }
+  body { font-family: system-ui, sans-serif; margin: 0; background: #EEF2FF; color: #1E1B4B; }
+  header { background: #3730A3; color: #fff; padding: 14px 16px; }
   main { max-width: 900px; margin: 0 auto; padding: 16px; }
   .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
-  .card { background: #fff; border: 1px solid #d3ddd7; border-radius: 12px; padding: 12px; }
+  .card { background: #fff; border: 1px solid #C7D2FE; border-radius: 12px; padding: 12px; }
   .val { font-size: 1.8rem; font-weight: 700; }
   .bad { border: 3px solid #b91c1c; }
   #status { margin: 10px 0; }
@@ -44,7 +44,7 @@ async function load() {
       '<div class="card"><div>Humidity</div><div class="val">' + h.toFixed(0) + ' %</div></div>';
     new Chart(document.getElementById('chart'), { type: 'line',
       data: { labels: feeds.map(f => new Date(f.created_at).toLocaleTimeString()),
-              datasets: [{ label: 'Temperature (°C)', data: feeds.map(f => Number(f.field1)), borderColor: '#1f8a70', tension: 0.3, pointRadius: 0 }] },
+              datasets: [{ label: 'Temperature (°C)', data: feeds.map(f => Number(f.field1)), borderColor: '#4F46E5', tension: 0.3, pointRadius: 0 }] },
       options: { animation: false } });
   } catch (e) {
     document.getElementById('status').textContent = 'Could not load data: ' + e.message;
@@ -136,8 +136,8 @@ COURSE.push({id:"u5", title:"Unit 5: Capstone", sub:"An SDG prototype, a working
  },
 
  {id:"5.4", title:"Your working web app", minutes:240,
-  intro:"A web app lets other people see your data without opening Colab. You will learn what a web page is made of, build a dashboard that fetches your data, and make it readable and accessible on a phone.",
-  objectives:["Explain HTML, CSS, and JavaScript and what each does.","Build a dashboard page that fetches JSON and draws cards and a chart.","Handle errors and stale data.","Check accessibility and phone layout."],
+  intro:"A web app lets other people see your results without opening Colab. You will learn what a web page is made of, build a dashboard that fetches your data and your analysis results, shows what they mean, and make it readable and accessible on a phone.",
+  objectives:["Explain HTML, CSS, and JavaScript and what each does.","Build a dashboard page that fetches JSON and draws cards and a chart.","Show analysis results (smoothed line, anomaly flags, data quality) with a plain-language interpretation, as designed in module 4.9.","Handle errors and stale data.","Check accessibility and phone layout."],
   sections:[
    {id:"layers", title:"HTML, CSS, JavaScript", keys:"html css javascript web page layers dom", html:`
     <p>HTML is the structure (headings, cards, a canvas); CSS is the look (colours, grid, spacing); JavaScript is the behaviour (fetch data, update the page). A <b>static</b> web app is just these files; no server of your own is needed.</p>`, interactive:["webLayers","webTutorial","web:web_card,web_js,web_a11y"]},
@@ -146,7 +146,22 @@ COURSE.push({id:"u5", title:"Unit 5: Capstone", sub:"An SDG prototype, a working
     <table class="t"><tr><th>Track</th><th>Data URL for the page</th></tr><tr><td>A</td><td>Add a JSON mode to your Apps Script <code>doGet</code> (return <code>ContentService.createTextOutput(JSON.stringify(rows)).setMimeType(ContentService.MimeType.JSON)</code>) and fetch your /exec URL with <code>?format=json</code>. Test it; some browsers need the redirect followed.</td></tr><tr><td>B</td><td>A Firebase path with public read rules (<code>/public_latest.json</code>) that your archive script writes; never make <code>/readings</code> public.</td></tr><tr><td>C</td><td>An API Gateway GET route + Lambda that returns recent items, with CORS enabled.</td></tr><tr><td>D</td><td>Blynk's own web dashboard (share link) embedded or linked.</td></tr><tr><td>E</td><td>The code below, or ThingSpeak's chart iframes.</td></tr></table>
     ${dlcode("index.html", DASH_STATIC, "index.html (static dashboard)")}
     <p>Make it yours: change the title, colours, limit, add a second chart, and a line that says what the numbers mean for your SDG target.</p>
-    ${secretsBox}`, interactive:["dashPreview","launchCheck"]}
+    ${secretsBox}`, interactive:["dashPreview","launchCheck"]},
+   {id:"analysis", title:"Show your analysis, not just your data", keys:"analysis panel results interpretation dashboard anomaly smoothed data quality", html:`
+    <p>A dashboard of raw numbers answers "what is it now?". Your Unit 4 work answers "what does it mean?". Add an <b>analysis panel</b> that shows three things from your notebook: a result (for example the smoothed line with anomaly marks), the <b>data-quality line</b> (rows used, repaired, missing) and a <b>plain-language interpretation</b> of one or two sentences that says only what the data supports (module 4.9).</p>
+    <p>The simplest route is the <code>results.csv</code> table you built in module 4.9: import it into a <b>Results</b> tab of your Sheet and have the page read and show it. The snippet below renders such a table into the page; it uses <code>textContent</code> so nothing in the Sheet can inject code into your page.</p>
+    ${code("javascript", `// rows = [{metric:'gas_anomalies', value:12, unit:'readings', interpretation:'Review these times'}, ...] fetched from your Results tab
+function renderResults(rows, target) {
+  target.replaceChildren();
+  rows.forEach(r => {
+    const card = document.createElement('div'); card.className = 'result';
+    const big = document.createElement('b'); big.textContent = r.value + ' ' + r.unit;
+    const name = document.createElement('span'); name.textContent = r.metric.replaceAll('_', ' ');
+    const why = document.createElement('p'); why.textContent = r.interpretation;      // your sentence, not a claim of cause
+    card.append(big, name, why); target.append(card);
+  });
+}`, "JavaScript: show results with their interpretation")}
+    <p>Check it as a reader would: every number has a unit; the interpretation does not say "causes" unless you ran an experiment; the table can be read by a screen reader; and the data-quality line is visible.</p>`, interactive:"gx_report"}
   ],
   quiz:[
    {q:"Which language changes the page after it loads?", o:["HTML","CSS","JavaScript","JSON"], a:2, e:"JavaScript runs in the browser and updates the page.", w:["","","",""]},
@@ -154,7 +169,7 @@ COURSE.push({id:"u5", title:"Unit 5: Capstone", sub:"An SDG prototype, a working
    {q:"Which should never be in a public page's code?", o:["A chart title","A write API key","A CSS colour","The channel's public ID"], a:1, e:"Write keys and passwords stay private.", w:["","","",""]}
   ],
   rating:["I have not made a web page.","I can edit the sample page.","My page shows my live data.","My page is accessible, phone-friendly, and handles errors."],
-  checkpoint:{code:"U5-C4", task:"Show your dashboard on a phone or browser with live data, a limit alert, and a stale-data warning.", met:"Live values, chart, alert, and warning visible; no secrets in the code.", upload:"Upload screenshots."},
+  checkpoint:{code:"U5-C4", task:"Show your dashboard on a phone or browser with live data, a limit alert, a stale-data warning, and an analysis panel: at least one result from your Unit 4 notebook with its interpretation sentence.", met:"Live values, chart, alert, warning and the analysis panel visible; interpretation does not claim cause; no secrets in the code.", upload:"Upload screenshots."},
   refs:["githubDocs","tsDocs","colab"]
  },
 
@@ -200,7 +215,7 @@ COURSE.push({id:"u5", title:"Unit 5: Capstone", sub:"An SDG prototype, a working
   objectives:["Organise a five-minute pitch: problem, build, evidence, limits, next step.","Demo the prototype and the web app.","Use a rubric to evaluate your own and a peer's work.","Reflect on learning."],
   sections:[
    {id:"pitch", title:"The five-minute pitch", keys:"pitch presentation story demo", html:`
-    <ol class="stepsl"><li><b>Problem and people</b> (45 s): the SDG target and who it helps.</li><li><b>Build</b> (60 s): a diagram, the parts, the track you chose, and why.</li><li><b>Evidence</b> (90 s): a chart, a number, and how you cleaned and checked the data.</li><li><b>Demo</b> (60 s): live data on the web app. Have a recording as backup.</li><li><b>Limits and next step</b> (45 s): what you do not know yet, and what you would do next.</li></ol>`, interactive:"pitchBuilder"},
+    <ol class="stepsl"><li><b>Problem and people</b> (45 s): the SDG target and who it helps.</li><li><b>Build</b> (60 s): a diagram, the parts, the track you chose, and why.</li><li><b>Evidence</b> (90 s): your data report in one minute and a half: the finding, the chart or table that shows it, the number with its uncertainty, and how you cleaned and checked the data.</li><li><b>Demo</b> (60 s): live data on the web app. Have a recording as backup.</li><li><b>Limits and next step</b> (45 s): what you do not know yet, and what you would do next.</li></ol>`, interactive:"pitchBuilder"},
    {id:"rubric", title:"Rubric and reflection", keys:"rubric self assessment peer review", html:`
     <p>Rate yourself on each criterion with evidence, then compare with a peer. Disagreements are useful: ask them to show you where they see it.</p>`, interactive:["rubricSelf","launchCheck"]}
   ],
@@ -210,7 +225,7 @@ COURSE.push({id:"u5", title:"Unit 5: Capstone", sub:"An SDG prototype, a working
    {q:"Which belongs in the evidence part?", o:["Your favourite colour","A chart and a number from cleaned data","The Wi-Fi password","A joke"], a:1, e:"Evidence is data you can point to.", w:["","","",""]}
   ],
   rating:["I am nervous.","I have a rough pitch.","I can present in five minutes with a demo.","I can give and receive useful feedback."],
-  checkpoint:{code:"U5-C6", task:"Present (or record) your five-minute pitch with a live demo, and complete the rubric self-assessment.", met:"All five parts; demo works or recording shown; rubric completed.", upload:"Upload the recording or slides and the rubric."},
+  checkpoint:{code:"U5-C6", task:"Present (or record) your five-minute pitch with a live demo, submit your data report (module 4.9), and complete the rubric self-assessment.", met:"All five parts; demo works or recording shown; data report attached with limits stated; rubric completed.", upload:"Upload the recording or slides and the rubric."},
   refs:["sdg","ds4e"]
  }
 ]});

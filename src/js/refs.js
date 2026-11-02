@@ -47,5 +47,16 @@ const REF = {
 "ds4e": ["Data Science 4 Everyone. (2025). K–12 data science learning progressions (Summer 2025 release). University of Chicago.", "https://www.datascience4everyone.org/learningprogressions"],
 "gaise": ["Bargagliotti, A., Franklin, C., Arnold, P., Gould, R., Johnson, S., Perez, L., & Spangler, D. A. (2020). Pre-K–12 guidelines for assessment and instruction in statistics education II (GAISE II). American Statistical Association and National Council of Teachers of Mathematics.", "https://www.amstat.org/asa/files/pdfs/GAISE/GAISEIIPreK-12_Full.pdf"],
 "alfuqaha": ["Al-Fuqaha, A., Guizani, M., Mohammadi, M., Aledhari, M., & Ayyash, M. (2015). Internet of things: A survey on enabling technologies, protocols, and applications. IEEE Communications Surveys & Tutorials, 17(4), 2347–2376.", "https://doi.org/10.1109/COMST.2015.2444095"],
-"wmoair": ["World Health Organization. (2021). WHO global air quality guidelines: Particulate matter (PM2.5 and PM10), ozone, nitrogen dioxide, sulfur dioxide and carbon monoxide. WHO.", "https://www.who.int/publications/i/item/9789240034228"]
+"wmoair": ["World Health Organization. (2021). WHO global air quality guidelines: Particulate matter (PM2.5 and PM10), ozone, nitrogen dioxide, sulfur dioxide and carbon monoxide. WHO.", "https://www.who.int/publications/i/item/9789240034228"],
+"fpp3": ["Hyndman, R. J., & Athanasopoulos, G. (2021). Forecasting: Principles and practice (3rd ed.). OTexts.", "https://otexts.com/fpp3/"],
+"statsmodels": ["Seabold, S., & Perktold, J. (2010). Statsmodels: Econometric and statistical modeling with Python. Proceedings of the 9th Python in Science Conference, 92–96.", "https://doi.org/10.25080/Majora-92bf1922-011"],
+"heatindex": ["National Weather Service. (n.d.). The heat index equation. NOAA Weather Prediction Center.", "https://www.wpc.ncep.noaa.gov/html/heatindex_equation.shtml"],
+"pyserial": ["Liechti, C. (n.d.). pySerial documentation.", "https://pyserial.readthedocs.io/"],
+"mq135": ["Winsen Electronics Technology Co., Ltd. (n.d.). MQ-135 semiconductor sensor for air quality control: Technical data [Data sheet]. Use the sheet that came with your module."],
+"isoforest": ["Liu, F. T., Ting, K. M., & Zhou, Z.-H. (2008). Isolation forest. In Proceedings of the 2008 Eighth IEEE International Conference on Data Mining (pp. 413–422). IEEE.", "https://doi.org/10.1109/ICDM.2008.17"],
+"hampelref": ["Davies, L., & Gather, U. (1993). The identification of multiple outliers. Journal of the American Statistical Association, 88(423), 782–792.", "https://doi.org/10.1080/01621459.1993.10476339"],
+"kaplan": ["Kaplan, E. L., & Meier, P. (1958). Nonparametric estimation from incomplete observations. Journal of the American Statistical Association, 53(282), 457–481.", "https://doi.org/10.1080/01621459.1958.10501452"],
+"breiman": ["Breiman, L. (2001). Random forests. Machine Learning, 45(1), 5–32.", "https://doi.org/10.1023/A:1010933404324"],
+"controlbook": ["Åström, K. J., & Murray, R. M. (2021). Feedback systems: An introduction for scientists and engineers (2nd ed.). Princeton University Press.", "https://www.cds.caltech.edu/~murray/amwiki/Second_Edition.html"],
+"scipystats": ["SciPy. (n.d.). scipy.stats.chi2_contingency. SciPy documentation.", "https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.chi2_contingency.html"],
 };

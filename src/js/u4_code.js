@@ -78,10 +78,10 @@ const PROJECT_HTML = `<!DOCTYPE html>
 <base target="_top">
 <meta charset="utf-8">
 <style>
-  :root { --ink:#13241F; --muted:#53665D; --bg:#F5F7F4; --card:#FFFFFF; --line:#D3DDD7; --ok:#1F8A70; --warn:#B45309; --bad:#B91C1C; }
+  :root { --ink:#1E1B4B; --muted:#475569; --bg:#EEF2FF; --card:#FFFFFF; --line:#C7D2FE; --ok:#4F46E5; --warn:#B45309; --bad:#B91C1C; }
   * { box-sizing: border-box; }
   body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--ink); }
-  header { padding: 14px 16px; background: #17483B; color: #fff; }
+  header { padding: 14px 16px; background: #3730A3; color: #fff; }
   header h1 { margin: 0; font-size: 1.3rem; }
   header p { margin: 4px 0 0; font-size: .9rem; opacity: .85; }
   main { padding: 16px; max-width: 1100px; margin: 0 auto; }
@@ -174,7 +174,7 @@ function draw() {
   const values = series.map(r => Number(r.value));
   if (window.Chart && numeric.length) {
     if (!chart) {
-      chart = new Chart(document.getElementById('chart'), {type: 'line', data: {labels, datasets: [{label: '', data: values, tension: 0.3, borderColor: '#1F8A70', pointRadius: 0}]},
+      chart = new Chart(document.getElementById('chart'), {type: 'line', data: {labels, datasets: [{label: '', data: values, tension: 0.3, borderColor: '#4F46E5', pointRadius: 0}]},
         options: {animation: false, maintainAspectRatio: false, plugins: {legend: {display: false}}, scales: {y: {title: {display: true, text: ''}}}}});
     }
     chart.data.labels = labels; chart.data.datasets[0].data = values;

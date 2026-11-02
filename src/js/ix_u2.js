@@ -8,7 +8,7 @@ INTERACTIVES.ohmLab = function(el){
     <div class="ix-out"><div class="kv"><span>Current I = V ÷ R</span><b class="olI"></b><span>Power P = V × I</span><b class="olP"></b></div></div>
     <p class="explain olN"></p></div>
     <svg class="flowsvg" viewBox="0 0 300 200" aria-label="Water analogy: pressure, flow, and pipe width"><rect x="20" y="40" width="40" height="120" rx="6" fill="#2563EB" opacity=".25"/><rect class="olTank" x="20" y="90" width="40" height="70" rx="6" fill="#2563EB" opacity=".7"/><text x="40" y="180" text-anchor="middle" class="svgtxt">pressure (V)</text>
-     <path d="M60 140 H140" stroke="#9BB2A8" stroke-width="22"/><rect class="olPipe" x="140" y="129" width="60" height="22" fill="#9BB2A8"/><path d="M200 140 H280" stroke="#9BB2A8" stroke-width="22"/><text x="170" y="120" text-anchor="middle" class="svgtxt">resistance (R)</text>
+     <path d="M60 140 H140" stroke="#9AA5CE" stroke-width="22"/><rect class="olPipe" x="140" y="129" width="60" height="22" fill="#9AA5CE"/><path d="M200 140 H280" stroke="#9AA5CE" stroke-width="22"/><text x="170" y="120" text-anchor="middle" class="svgtxt">resistance (R)</text>
      <g class="olDrops"></g><text x="240" y="180" text-anchor="middle" class="svgtxt">flow (I)</text></svg></div>`);
   let t = 0, raf;
   const draw = () => { V = +$(".olV", el).value; R = +$(".olR", el).value; const I = V / R, P = V * I;
@@ -24,7 +24,7 @@ INTERACTIVES.ohmLab = function(el){
 /* ---- 2.1 LED resistor calculator ---- */
 INTERACTIVES.ledCalc = function(el){
   const E12 = [10,12,15,18,22,27,33,39,47,56,68,82], std = r => { for (let d = 1; d <= 100000; d *= 10) for (const v of E12) if (v * d >= r) return v * d; return r; };
-  const LEDS = {red:[2.0,"#D62828"], yellow:[2.1,"#E8B84A"], green:[2.2,"#1F8A70"], blue:[3.1,"#2563EB"], white:[3.1,"#E5E7EB"]};
+  const LEDS = {red:[2.0,"#D62828"], yellow:[2.1,"#E8B84A"], green:[2.2,"#4F46E5"], blue:[3.1,"#2563EB"], white:[3.1,"#E5E7EB"]};
   el.innerHTML = bench("LED resistor calculator", `<div class="controls"><label>Supply <select class="dinput lcS"><option value="3.3">3.3 V pin (ESP32-S3, ESP8266)</option><option value="5">5 V pin (Uno R4 WiFi)</option></select></label>
    <label>LED color <select class="dinput lcC">${Object.keys(LEDS).map(k => `<option>${k}</option>`).join("")}</select></label><label>Current <select class="dinput lcI"><option value="0.005">5 mA (dim)</option><option value="0.01" selected>10 mA (good)</option><option value="0.02">20 mA (bright, maximum for most 5 mm LEDs)</option></select></label></div>
    <div class="ix-grid2"><div class="ix-out lcOut"></div><svg class="flowsvg" viewBox="0 0 260 120" aria-label="LED circuit"><text x="10" y="64" class="svgtxt b lcVt">3.3 V</text><path d="M50 60 H90" stroke="var(--ink)" stroke-width="2"/><rect x="90" y="50" width="50" height="20" rx="4" fill="#E8D8B0" stroke="var(--ink)"/><text x="115" y="44" text-anchor="middle" class="svgtxt lcRt"></text><path d="M140 60 H170" stroke="var(--ink)" stroke-width="2"/><path d="M170 46 V74 L196 60 Z" class="lcLed" stroke="var(--ink)"/><path d="M196 46 V74 M196 60 H240 V100 H20 V80" stroke="var(--ink)" stroke-width="2" fill="none"/><text x="220" y="115" class="svgtxt">GND</text></svg></div>
@@ -48,7 +48,7 @@ INTERACTIVES.dividerLab = function(el){
     <div class="controls dvLight" hidden><label>Light <input type="range" class="dvL" min="0" max="100" value="50"></label><span class="rangeval dvLv"></span></div>
     <div class="controls"><label>R2 (bottom) <input type="range" class="dvR2" min="100" max="100000" step="100"></label><span class="rangeval dvR2v"></span></div>
     <div class="ix-out"><div class="ix-big dvOut"></div><p class="explain dvN"></p></div></div>
-    <svg class="flowsvg" viewBox="0 0 220 250" aria-label="Divider schematic"><text x="90" y="18" class="svgtxt b dvTV"></text><path d="M80 24 V40" stroke="var(--ink)" stroke-width="2"/><rect x="65" y="40" width="30" height="70" rx="5" class="dvRa" fill="#E8D8B0" stroke="var(--ink)"/><text x="105" y="80" class="svgtxt dvTR1"></text><path d="M80 110 V140" stroke="var(--ink)" stroke-width="2"/><circle cx="80" cy="125" r="5" fill="#C8653A"/><path d="M80 125 H150" stroke="#C8653A" stroke-width="2.5"/><text x="154" y="129" class="svgtxt b dvTO"></text><rect x="65" y="140" width="30" height="70" rx="5" fill="#E8D8B0" stroke="var(--ink)"/><text x="105" y="180" class="svgtxt dvTR2"></text><path d="M80 210 V232 M66 232 H94 M71 238 H89 M76 244 H84" stroke="var(--ink)" stroke-width="2"/></svg></div>`);
+    <svg class="flowsvg" viewBox="0 0 220 250" aria-label="Divider schematic"><text x="90" y="18" class="svgtxt b dvTV"></text><path d="M80 24 V40" stroke="var(--ink)" stroke-width="2"/><rect x="65" y="40" width="30" height="70" rx="5" class="dvRa" fill="#E8D8B0" stroke="var(--ink)"/><text x="105" y="80" class="svgtxt dvTR1"></text><path d="M80 110 V140" stroke="var(--ink)" stroke-width="2"/><circle cx="80" cy="125" r="5" fill="#C2410C"/><path d="M80 125 H150" stroke="#C2410C" stroke-width="2.5"/><text x="154" y="129" class="svgtxt b dvTO"></text><rect x="65" y="140" width="30" height="70" rx="5" fill="#E8D8B0" stroke="var(--ink)"/><text x="105" y="180" class="svgtxt dvTR2"></text><path d="M80 210 V232 M66 232 H94 M71 238 H89 M76 244 H84" stroke="var(--ink)" stroke-width="2"/></svg></div>`);
   const fmtR = r => r >= 1000 ? (r / 1000).toFixed(r >= 10000 ? 0 : 1) + " kΩ" : r.toFixed(0) + " Ω";
   const set = k => { const p = PRE[k]; $(".dvV", el).value = p[0]; $(".dvR1", el).value = p[1]; $(".dvR2", el).value = p[2]; $(".dvLight", el).hidden = k !== "ldr"; $(".dvR1", el).closest(".controls").hidden = k === "ldr"; draw(); };
   const draw = () => { const k = $(".dvP", el).value, V = +$(".dvV", el).value, R2 = +$(".dvR2", el).value; let R1 = +$(".dvR1", el).value;
@@ -71,8 +71,8 @@ INTERACTIVES.pullupViz = function(el){
   el.querySelectorAll(".seg button").forEach(b => b.onclick = () => { mode = b.dataset.m; el.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-selected", x === b)); $(".puN", el).textContent = notes[mode]; });
   $(".puN", el).textContent = notes[mode];
   const frame = () => { if (!alive(el)) return; const v = pressed ? 0 : mode === "float" ? (Math.random() > .5 ? 1 : 0) : 1; hist.push(v); if (hist.length > 120) hist.shift();
-    const cv = $(".puC", el), {g, W, H} = hiDPI(cv); g.clearRect(0, 0, W, H); g.strokeStyle = cssv("--teal") || "#1F8A70"; g.lineWidth = 2; g.beginPath(); hist.forEach((x, i) => { const X = i / 119 * W, Y = x ? 30 : H - 30; i ? g.lineTo(X, Y) : g.moveTo(X, Y); }); g.stroke();
-    g.fillStyle = cssv("--muted") || "#53665D"; g.font = "11px sans-serif"; g.fillText("HIGH", 4, 26); g.fillText("LOW", 4, H - 34);
+    const cv = $(".puC", el), {g, W, H} = hiDPI(cv); g.clearRect(0, 0, W, H); g.strokeStyle = cssv("--teal") || "#4F46E5"; g.lineWidth = 2; g.beginPath(); hist.forEach((x, i) => { const X = i / 119 * W, Y = x ? 30 : H - 30; i ? g.lineTo(X, Y) : g.moveTo(X, Y); }); g.stroke();
+    g.fillStyle = cssv("--muted") || "#475569"; g.font = "11px sans-serif"; g.fillText("HIGH", 4, 26); g.fillText("LOW", 4, H - 34);
     raf = setTimeout(() => requestAnimationFrame(frame), 60); };
   frame();
 };
@@ -106,7 +106,7 @@ function bbSVG(o){
       const top = down ? y + 8 : y - 8 - h;
       return `<g class="bb-mod"><rect x="${x0}" y="${top}" width="${x1 - x0}" height="${h}" rx="5" fill="${c.color || "#1F6FB2"}" stroke="rgba(0,0,0,.4)"/>${P.map(p => `<path d="M${p[0][0]} ${y} V${down ? top + 4 : top + h - 4}" stroke="#d4d4d4" stroke-width="3"/><text x="${p[0][0]}" y="${down ? top + 18 : top + h - 10}" text-anchor="middle" class="bb-ml">${esc(p[1])}</text>`).join("")}<text x="${(x0 + x1) / 2}" y="${down ? top + h - 10 : top + 18}" text-anchor="middle" class="bb-mt">${esc(c.label || "")}</text></g>`; }
     return ""; };
-  const term = (t, right) => `<g><rect x="${right ? t.x - 26 : t.x - 34}" y="${t.y - 11}" width="64" height="22" rx="5" fill="${t.color || "#17483B"}"/><text x="${right ? t.x + 6 : t.x - 2}" y="${t.y + 4}" text-anchor="middle" fill="#fff" font-size="10" font-family="JetBrains Mono, monospace">${esc(t.label)}</text><circle class="hole term" data-h="${t.id}" cx="${right ? t.x - 26 : t.x + 34}" cy="${t.y}" r="6" fill="#E8B84A"/></g>`;
+  const term = (t, right) => `<g><rect x="${right ? t.x - 26 : t.x - 34}" y="${t.y - 11}" width="64" height="22" rx="5" fill="${t.color || "#3730A3"}"/><text x="${right ? t.x + 6 : t.x - 2}" y="${t.y + 4}" text-anchor="middle" fill="#fff" font-size="10" font-family="JetBrains Mono, monospace">${esc(t.label)}</text><circle class="hole term" data-h="${t.id}" cx="${right ? t.x - 26 : t.x + 34}" cy="${t.y}" r="6" fill="#E8B84A"/></g>`;
   const W = 44 + 29 * 19 + 26, Hh = 306, L = o.terms ? 112 : 0, R = o.rterms ? 112 : 0;
   const block = (t, right) => t.block ? `<rect x="${right ? W + 22 : -L + 2}" y="${t.block[0]}" width="${L - 26 || R - 26}" height="${t.block[1]}" rx="10" fill="${t.block[2] || "#1a1d21"}" opacity=".95"/><text x="${right ? W + 22 + (R - 26) / 2 : -L + 2 + (L - 26) / 2}" y="${t.block[0] + 16}" text-anchor="middle" fill="#fff" font-size="10.5" font-weight="700">${esc(t.block[3] || "")}</text>` : "";
   return `<svg class="bbsim" viewBox="${-L} 0 ${W + L + R} ${Hh}" role="img" aria-label="${esc(o.label || "Virtual breadboard")}">
@@ -115,13 +115,13 @@ function bbSVG(o){
    <rect x="0" y="146" width="${W}" height="14" fill="#E4DCC6"/>
    <path d="M20 9 H${W - 10}" stroke="#D62828" stroke-width="1.5" opacity=".6"/><path d="M20 45 H${W - 10}" stroke="#2563EB" stroke-width="1.5" opacity=".6"/><path d="M20 263 H${W - 10}" stroke="#2563EB" stroke-width="1.5" opacity=".6"/><path d="M20 299 H${W - 10}" stroke="#D62828" stroke-width="1.5" opacity=".6"/>
    <text x="10" y="22" class="lbl" fill="#D62828">+</text><text x="10" y="40" class="lbl">−</text><text x="10" y="276" class="lbl">−</text><text x="10" y="294" class="lbl" fill="#D62828">+</text>
-   ${o.split ? `<path d="M${(bbXY("a15")[0] + bbXY("a16")[0]) / 2} 6 V48 M${(bbXY("a15")[0] + bbXY("a16")[0]) / 2} 260 V302" stroke="#C8653A" stroke-width="2.4" stroke-dasharray="4 3"/><text x="${(bbXY("a15")[0] + bbXY("a16")[0]) / 2 + 4}" y="58" class="lbl" fill="#C8653A">gap</text>` : ""}
+   ${o.split ? `<path d="M${(bbXY("a15")[0] + bbXY("a16")[0]) / 2} 6 V48 M${(bbXY("a15")[0] + bbXY("a16")[0]) / 2} 260 V302" stroke="#C2410C" stroke-width="2.4" stroke-dasharray="4 3"/><text x="${(bbXY("a15")[0] + bbXY("a16")[0]) / 2 + 4}" y="58" class="lbl" fill="#C2410C">gap</text>` : ""}
    <g class="strips"></g>${lbl.join("")}
    ${holes.map(h => { const [x, y] = bbXY(h); return `<rect class="hole" data-h="${h}" x="${x - 4}" y="${y - 4}" width="8" height="8" rx="1.5"/>`; }).join("")}
    ${(o.comps || []).filter(c => c.type === "module").map(comp).join("")}<g class="wires">${(o.wires || []).map(wire).join("")}</g>${(o.comps || []).filter(c => c.type !== "module").map(comp).join("")}
    ${(o.terms || []).map(t => term(t, false)).join("")}${(o.rterms || []).map(t => term(t, true)).join("")}
    ${(o.labels || []).map(l => { const [x, y] = XY(l[0]); return `<text x="${x + (l[2] || 0)}" y="${y + (l[3] || 16)}" text-anchor="middle" class="bb-tl">${esc(l[1])}</text>`; }).join("")}
-   ${(o.spots || []).map(sp => { const [x, y] = XY(sp); return `<circle cx="${x}" cy="${y}" r="13" fill="none" stroke="#C8653A" stroke-width="3" class="bb-spot"/>`; }).join("")}
+   ${(o.spots || []).map(sp => { const [x, y] = XY(sp); return `<circle cx="${x}" cy="${y}" r="13" fill="none" stroke="#C2410C" stroke-width="3" class="bb-spot"/>`; }).join("")}
   </svg>`;
 }
 /* ---- 2.2 breadboard explorer ---- */
@@ -149,11 +149,11 @@ INTERACTIVES.bbExplore = function(el){
 /* ---- 2.2 build an LED circuit ---- */
 INTERACTIVES.bbBuild = function(el){
   const comps = [{type:"led", a:"e12", k:"e13", color:"#D62828"}, {type:"res", p1:"b13", p2:"T-13", ohms:getBoard() === "uno" ? 470 : 220, label:getBoard() === "uno" ? "470 Ω" : "220 Ω"}];
-  const terms = () => [{id:"PIN", x:-70, y:110, label:(b => b === "uno" ? "D" + pinK(b, "LED_PIN") : b === "s3" ? "GPIO" + pinK(b, "LED_PIN") : pinK(b, "LED_PIN"))(getBoard()), color:"#C8653A"}, {id:"GND", x:-70, y:200, label:"GND", color:"#222"}];
+  const terms = () => [{id:"PIN", x:-70, y:110, label:(b => b === "uno" ? "D" + pinK(b, "LED_PIN") : b === "s3" ? "GPIO" + pinK(b, "LED_PIN") : pinK(b, "LED_PIN"))(getBoard()), color:"#C2410C"}, {id:"GND", x:-70, y:200, label:"GND", color:"#222"}];
   let wires = [], pick = null;
   el.innerHTML = bench("Build: LED + resistor on a breadboard", `<p class="explain">The LED (long leg in e12) and the resistor (b13 to the top − rail) are already placed. Add the wires: tap a board pin on the left, then a hole. Tap a wire's end hole again to remove it.</p>
    <div class="bbwrap bbW"></div><div class="controls"><button class="btn primary bbChk" type="button">Check circuit</button><button class="btn bbClr" type="button">Clear wires</button></div><ul class="reslist bbOut"></ul>`);
-  const draw = () => { $(".bbW", el).innerHTML = bbSVG({split:false, comps, terms:terms(), wires:wires.map(w => ({from:w[0] === "PIN" || w[0] === "GND" ? termXY(w[0]) : w[0], to:w[1], color:w[0] === "GND" ? "#222" : "#C8653A"}))});
+  const draw = () => { $(".bbW", el).innerHTML = bbSVG({split:false, comps, terms:terms(), wires:wires.map(w => ({from:w[0] === "PIN" || w[0] === "GND" ? termXY(w[0]) : w[0], to:w[1], color:w[0] === "GND" ? "#222" : "#C2410C"}))});
     el.querySelectorAll(".bbW .hole").forEach(h => h.onclick = () => click(h.dataset.h)); if (pick){ const p = el.querySelector(`.bbW .hole[data-h="${pick}"]`); if (p) p.classList.add("sel"); } };
   const termXY = id => { const t = terms().find(x => x.id === id); return [t.x + 34, t.y]; };
   const click = id => { if (id === "PIN" || id === "GND"){ pick = id; draw(); return; }
@@ -174,22 +174,22 @@ INTERACTIVES.bbBuild = function(el){
 };
 /* ---- 2.2 fault finder: six realistic faults, each drawn as a real breadboard ---- */
 INTERACTIVES.faultFinder = function(el){
-  const pinT = (y, lbl) => ({id:"PIN", x:-70, y, label:lbl, color:"#C8653A"}), gndT = y => ({id:"GND", x:-70, y, label:"GND", color:"#222"}), v3T = y => ({id:"V33", x:-70, y, label:"3V3", color:"#D62828"});
+  const pinT = (y, lbl) => ({id:"PIN", x:-70, y, label:lbl, color:"#C2410C"}), gndT = y => ({id:"GND", x:-70, y, label:"GND", color:"#222"}), v3T = y => ({id:"V33", x:-70, y, label:"3V3", color:"#D62828"});
   const brd = (y, h, name) => ({block:[y, h, "#1a1d21", name]});
   const F = [
    {d:"The LED never lights. The program is right (it blinks on the virtual board) and every wire is pushed in firmly.",
     terms:[Object.assign(pinT(110, "GPIO15"), brd(70, 160, "ESP32-S3")), gndT(200)],
-    comps:[{type:"led", a:"e13", k:"e12"}, {type:"res", p1:"a13", p2:"T-13", ohms:220, label:"220 Ω"}], wires:[{from:"PIN", to:"a12", color:"#C8653A"}, {from:"GND", to:"T-2", color:"#222"}],
+    comps:[{type:"led", a:"e13", k:"e12"}, {type:"res", p1:"a13", p2:"T-13", ohms:220, label:"220 Ω"}], wires:[{from:"PIN", to:"a12", color:"#C2410C"}, {from:"GND", to:"T-2", color:"#222"}],
     o:["The LED is in backwards: the pin feeds its short leg (−) and the resistor connects its long leg (+) to GND","The resistor should be 10 kΩ","The power rail is split","Column 12 is broken"], a:0, spot:["e12","e13"],
     x:"An LED only conducts from its long leg (+, anode) to its short leg (−, cathode, flat side). Here the board pin feeds column 12, where the <b>short</b> leg is. Turn the LED around so the long leg is in column 12."},
    {d:"The LED never lights, but a multimeter shows the pin switching between 0 V and 3.3 V on column 8.",
     terms:[Object.assign(pinT(110, "GPIO15"), brd(70, 160, "ESP32-S3")), gndT(200)],
-    comps:[{type:"led", a:"c8", k:"d8"}, {type:"res", p1:"b8", p2:"T-8", ohms:220, label:"220 Ω"}], wires:[{from:"PIN", to:"a8", color:"#C8653A"}, {from:"GND", to:"T-2", color:"#222"}],
+    comps:[{type:"led", a:"c8", k:"d8"}, {type:"res", p1:"b8", p2:"T-8", ohms:220, label:"220 Ω"}], wires:[{from:"PIN", to:"a8", color:"#C2410C"}, {from:"GND", to:"T-2", color:"#222"}],
     o:["Both LED legs are in the same strip (column 8), so the LED is bypassed","The resistor value is too big","The LED is in backwards","Column 8 is broken"], a:0, spot:["c8","d8"],
     x:"Holes c8 and d8 share one metal clip, so both legs of the LED are connected together and current flows around it, straight through the resistor. Put the legs in two different columns, for example e8 and e9."},
    {d:"The LED never lights. The wiring looks almost exactly like the diagram.",
     terms:[Object.assign(pinT(110, "GPIO15"), brd(70, 160, "ESP32-S3")), gndT(200)],
-    comps:[{type:"led", a:"e12", k:"e13"}, {type:"res", p1:"a13", p2:"T-13", ohms:220, label:"220 Ω"}], wires:[{from:"PIN", to:"a11", color:"#C8653A"}, {from:"GND", to:"T-2", color:"#222"}],
+    comps:[{type:"led", a:"e12", k:"e13"}, {type:"res", p1:"a13", p2:"T-13", ohms:220, label:"220 Ω"}], wires:[{from:"PIN", to:"a11", color:"#C2410C"}, {from:"GND", to:"T-2", color:"#222"}],
     o:["The pin wire is one column off: it is in column 11, the LED's long leg is in column 12","The LED is in backwards","The resistor is in the wrong place","The GND wire is in the wrong rail"], a:0, spot:["a11","e12"],
     x:"Off-by-one is the most common breadboard fault. Column 11 is not connected to column 12, so the pin reaches nothing. Move the wire to column 12 (any of a12–e12)."},
    {d:"Two identical LED circuits are powered from the top rails. The left LED lights; the right one does not.",
@@ -199,13 +199,13 @@ INTERACTIVES.faultFinder = function(el){
     o:["The top rails are split in the middle (the dashed gap) and not bridged","The right LED is in backwards","Column 24 is broken","The board is in sleep mode"], a:0, spot:["T+15","T+16","T-15","T-16"],
     x:"On many full-size breadboards the rails stop in the middle. Power reaches only the left half. Add two short jumpers across the gap: T+15 to T+16 and T−15 to T−16."},
    {d:"The HC-SR04 has power, but the distance always reads 0 cm.",
-    terms:[Object.assign({id:"V33", x:-70, y:70, label:"5V", color:"#D62828"}, brd(28, 196, "ESP32-S3")), {id:"GND", x:-70, y:110, label:"GND", color:"#222"}, {id:"TX", x:-70, y:150, label:"TRIG_PIN (out)", color:"#B08A1E"}, {id:"RX", x:-70, y:190, label:"ECHO_PIN (in)", color:"#B08A1E"}],
+    terms:[Object.assign({id:"V33", x:-70, y:70, label:"5V", color:"#D62828"}, brd(28, 196, "ESP32-S3")), {id:"GND", x:-70, y:110, label:"GND", color:"#222"}, {id:"TX", x:-70, y:150, label:"TRIG_PIN (out)", color:"#A16207"}, {id:"RX", x:-70, y:190, label:"ECHO_PIN (in)", color:"#A16207"}],
     comps:[{type:"module", pins:[["g20","VCC"],["g21","GND"],["g22","TRIG"],["g23","ECHO"]], label:"HC-SR04", color:"#1F6FB2", h:52}],
-    wires:[{from:"V33", to:"f20", color:"#D62828"}, {from:"GND", to:"f21", color:"#222"}, {from:"TX", to:"f23", color:"#1F8A70"}, {from:"RX", to:"f22", color:"#2563EB"}],
+    wires:[{from:"V33", to:"f20", color:"#D62828"}, {from:"GND", to:"f21", color:"#222"}, {from:"TX", to:"f23", color:"#4F46E5"}, {from:"RX", to:"f22", color:"#2563EB"}],
     o:["The TRIG and ECHO wires are swapped: the board's output pin must go to TRIG, and ECHO must come back to an input pin","The baud rate is wrong","The sensor needs 12 V","The wires are too short"], a:0, spot:["f22","f23"],
     x:"The board sends the trigger pulse out and listens for the echo: output pin → TRIG, ECHO → input pin. Swap the two signal wires. (ECHO is a 5 V signal: on a 3.3 V board such as the ESP32 or ESP8266, use a divider.)"},
    {d:"The DHT module never answers: every reading is nan, and its little power LED stays off.",
-    terms:[Object.assign(v3T(80), brd(46, 200, "ESP32-S3")), {id:"DATA", x:-70, y:130, label:"GPIO4", color:"#C8653A"}, gndT(190)],
+    terms:[Object.assign(v3T(80), brd(46, 200, "ESP32-S3")), {id:"DATA", x:-70, y:130, label:"GPIO4", color:"#C2410C"}, gndT(190)],
     comps:[{type:"module", pins:[["g20","+"],["g21","OUT"],["g22","−"]], label:"DHT22 module", color:"#1d4ed8", h:52}],
     wires:[{from:"V33", to:"T+2", color:"#D62828"}, {from:"GND", to:"T-3", color:"#222"}, {from:"T+18", to:"f20", color:"#D62828"}, {from:"DATA", to:"f21", color:"#E8B84A"}, {from:"f22", to:"B-24", color:"#222"}],
     o:["The module's − goes to the BOTTOM − rail, which is not connected to the board's GND","The DHT needs 12 V","The data pin needs a 1 MΩ resistor","The module is in backwards"], a:0, spot:["B-24","T-3"],
@@ -243,11 +243,11 @@ INTERACTIVES.dhtProtocol = function(el){
   const draw = () => { T = +$(".dpT", el).value; Hh = +$(".dpH", el).value; $(".dpTv", el).textContent = T.toFixed(1) + " °C"; $(".dpHv", el).textContent = Hh.toFixed(1) + " %";
     const b = bits(), all = b.str.join(""); const cv = $(".dpC", el), {g, W, H} = hiDPI(cv); g.clearRect(0, 0, W, H);
     const seq = [[0, 1.0], [1, .03], [0, .08], [1, .08]]; all.split("").forEach(x => { seq.push([0, .05]); seq.push([1, x === "1" ? .07 : .027]); }); seq.push([0, .05], [1, .2]);
-    const tot = seq.reduce((s, x) => s + x[1], 0); let x = 0; g.strokeStyle = cssv("--teal") || "#1F8A70"; g.lineWidth = 1.6; g.beginPath(); g.moveTo(0, 20);
+    const tot = seq.reduce((s, x) => s + x[1], 0); let x = 0; g.strokeStyle = cssv("--teal") || "#4F46E5"; g.lineWidth = 1.6; g.beginPath(); g.moveTo(0, 20);
     seq.forEach(([v, d], k) => { const y = v ? 20 : H - 24, nx = x + d / tot * W; g.lineTo(x, y); g.lineTo(nx, y); x = nx; }); g.stroke();
-    g.fillStyle = cssv("--muted") || "#53665D"; g.font = "10px sans-serif"; g.fillText("start: board pulls LOW ≥ 1 ms", 4, H - 6); g.fillText("40 data bits (short HIGH = 0, long HIGH = 1)", W * .45, H - 6);
-    $(".dpBits", el).innerHTML = b.str.map((s, i) => `<span style="color:${["#2563EB","#2563EB","#C8653A","#C8653A","#7C3AED"][i]}">${s}</span>`).join(" ");
-    $(".dpOut", el).innerHTML = `<span style="color:#2563EB"><b>Humidity</b> 16 bits = ${b.bytes[0] * 256 + b.bytes[1]} → ÷ 10 = ${Hh.toFixed(1)} %</span><br><span style="color:#C8653A"><b>Temperature</b> 16 bits = ${b.bytes[2] * 256 + b.bytes[3]}${T < 0 ? " (top bit = negative)" : ""} → ÷ 10 = ${T.toFixed(1)} °C</span><br><span style="color:#7C3AED"><b>Checksum</b> = (${b.bytes.join(" + ")}) mod 256 = ${b.cs}. If it does not match, the library reports a failed read (nan).</span>`;
+    g.fillStyle = cssv("--muted") || "#475569"; g.font = "10px sans-serif"; g.fillText("start: board pulls LOW ≥ 1 ms", 4, H - 6); g.fillText("40 data bits (short HIGH = 0, long HIGH = 1)", W * .45, H - 6);
+    $(".dpBits", el).innerHTML = b.str.map((s, i) => `<span style="color:${["#2563EB","#2563EB","#C2410C","#C2410C","#7C3AED"][i]}">${s}</span>`).join(" ");
+    $(".dpOut", el).innerHTML = `<span style="color:#2563EB"><b>Humidity</b> 16 bits = ${b.bytes[0] * 256 + b.bytes[1]} → ÷ 10 = ${Hh.toFixed(1)} %</span><br><span style="color:#C2410C"><b>Temperature</b> 16 bits = ${b.bytes[2] * 256 + b.bytes[3]}${T < 0 ? " (top bit = negative)" : ""} → ÷ 10 = ${T.toFixed(1)} °C</span><br><span style="color:#7C3AED"><b>Checksum</b> = (${b.bytes.join(" + ")}) mod 256 = ${b.cs}. If it does not match, the library reports a failed read (nan).</span>`;
     markAct("dhtProtocol", "used"); };
   el.querySelectorAll("input").forEach(x => x.oninput = draw); draw();
 };

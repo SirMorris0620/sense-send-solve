@@ -26,7 +26,7 @@ const BADGE_ICONS = {
   map:'<path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/>',
   flask:'<path d="M9 3h6M10 3v6L4 19a1.5 1.5 0 0 0 1.3 2h13.4a1.5 1.5 0 0 0 1.3-2L14 9V3"/><path d="M7 15h10"/>'
 };
-const BADGE_CATS = {milestone:["Milestones","#17483B"], skill:["Skills","#C8653A"], ai:["AI literacy","#7C3AED"], habit:["Habits","#B08A1E"]};
+const BADGE_CATS = {milestone:["Milestones","#3730A3"], skill:["Skills","#C2410C"], ai:["AI literacy","#7C3AED"], habit:["Habits","#A16207"]};
 const bAct = id => (prog.act || {})[id];
 const bPassed = ids => ids.filter(id => bAct(id) === "pass").length;
 const bDone = ids => ids.filter(id => bAct(id)).length;
